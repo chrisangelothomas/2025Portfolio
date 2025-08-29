@@ -3,7 +3,7 @@ interface NavigationProps {
   onRobotSelect: (index: number) => void;
 }
 
-const robots = ['K-Bot', 'Z-Bot', 'P-Bot', 'PrismaX', 'Misc'];
+const robots = ['K-Bot', 'Z-Bot'];
 
 export default function Navigation({ currentRobot, onRobotSelect }: NavigationProps) {
   const handleRobotClick = (index: number) => {

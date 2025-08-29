@@ -3,8 +3,6 @@ import { useEffect, useState } from 'react';
 const robots = [
   { name: 'K-Bot', image: '/lovable-uploads/b1ef3f37-b46d-4a5b-8911-cfcbece79ac4.png', description: 'Advanced humanoid platform' },
   { name: 'Z-Bot', image: '/lovable-uploads/b1ef3f37-b46d-4a5b-8911-cfcbece79ac4.png', description: 'Compact tactical unit' },
-  { name: 'P-Bot', image: '/lovable-uploads/b1ef3f37-b46d-4a5b-8911-cfcbece79ac4.png', description: 'Precision assembly robot' },
-  { name: 'PrismaX', image: '/lovable-uploads/b1ef3f37-b46d-4a5b-8911-cfcbece79ac4.png', description: 'Luxury service android' },
 ];
 
 export default function RobotShowcase() {
@@ -15,8 +13,8 @@ export default function RobotShowcase() {
       const scrollY = window.scrollY;
       const windowHeight = window.innerHeight;
       
-      // Simple: each robot gets equal scroll sections
-      const sectionHeight = windowHeight * 4; // Each robot visible for 4 screen heights
+      // Each robot gets 3 screen heights of scroll
+      const sectionHeight = windowHeight * 3;
       const robotIndex = Math.floor(scrollY / sectionHeight);
       const clampedIndex = Math.min(Math.max(robotIndex, 0), robots.length - 1);
       
@@ -27,14 +25,30 @@ export default function RobotShowcase() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Calculate scroll progress within current robot section
+  const scrollY = window.scrollY;
+  const windowHeight = window.innerHeight;
+  const sectionHeight = windowHeight * 3;
+  const sectionProgress = (scrollY % sectionHeight) / sectionHeight;
+  
+  // Robot moves up as you scroll (0 = bottom, 1 = top)
+  const translateY = sectionProgress * 100;
+
   return (
-    <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-10">
+    <div className="fixed inset-0 flex items-end justify-center pointer-events-none z-10">
       <div className="relative w-screen h-screen flex items-center justify-center">
-        <img
-          src={robots[currentRobot].image}
-          alt={robots[currentRobot].name}
-          className="max-w-[50vw] max-h-[80vh] object-contain"
-        />
+        <div
+          className="transition-transform duration-100 ease-linear"
+          style={{
+            transform: `translateY(-${translateY}%)`,
+          }}
+        >
+          <img
+            src={robots[currentRobot].image}
+            alt={robots[currentRobot].name}
+            className="w-[100vw] h-[100vh] object-contain"
+          />
+        </div>
       </div>
     </div>
   );

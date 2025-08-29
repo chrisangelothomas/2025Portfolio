@@ -6,8 +6,8 @@ import ProfileSection from '../components/ProfileSection';
 const Index = () => {
   const [currentRobot, setCurrentRobot] = useState(0);
 
-  // Create scroll height for all robots (4 screen heights per robot)
-  const scrollHeight = `${400 * 4}vh`; // 4 robots
+  // Create scroll height for 2 robots (3 screen heights per robot)
+  const scrollHeight = `${300 * 2}vh`; // 2 robots
 
   return (
     <div className="bg-background min-h-screen font-geometric">
@@ -36,24 +36,7 @@ const Index = () => {
         <RobotShowcase />
 
         {/* Scroll Spacer */}
-        <div style={{ height: scrollHeight }} className="relative">
-          {/* Subtle grid pattern overlay */}
-          <div 
-            className="absolute inset-0 opacity-5"
-            style={{
-              backgroundImage: `
-                linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px)
-              `,
-              backgroundSize: '50px 50px'
-            }}
-          ></div>
-        </div>
-
-        {/* Subtle ambient lighting effect */}
-        <div className="fixed inset-0 pointer-events-none z-0">
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-accent/5 rounded-full blur-3xl"></div>
-        </div>
+        <div style={{ height: scrollHeight }} className="relative"></div>
       </div>
     </div>
   );
