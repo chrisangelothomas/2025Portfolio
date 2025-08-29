@@ -12,46 +12,29 @@ export default function RobotShowcase() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrolled = window.scrollY;
-      const progress = scrolled / scrollHeight;
+      const scrollY = window.scrollY;
+      const windowHeight = window.innerHeight;
       
-      // Simple calculation: divide scroll into equal sections for each robot
-      const robotIndex = Math.floor(progress * robots.length);
-      const clampedIndex = Math.min(robotIndex, robots.length - 1);
+      // Simple: each robot gets equal scroll sections
+      const sectionHeight = windowHeight * 4; // Each robot visible for 4 screen heights
+      const robotIndex = Math.floor(scrollY / sectionHeight);
+      const clampedIndex = Math.min(Math.max(robotIndex, 0), robots.length - 1);
+      
       setCurrentRobot(clampedIndex);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Calculate how far the current robot should be scrolled up
-  const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-  const scrolled = window.scrollY;
-  const totalProgress = scrolled / scrollHeight;
-  
-  // Progress within current robot section (0 to 1)
-  const robotSectionProgress = (totalProgress * robots.length) % 1;
-  
-  // Robot moves from bottom (0) to completely off top (100% + extra to ensure it's gone)
-  const robotTranslateY = robotSectionProgress * 150; // 150% ensures it goes completely off screen
-
   return (
-    <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-10" style={{ top: '-40vh' }}>
-      <div className="relative overflow-hidden bg-background" style={{ width: '200vw', height: '200vh' }}>
-        <div
-          className="absolute bottom-0 w-full h-full transition-none bg-background"
-          style={{
-            transform: `translateY(-${robotTranslateY}%)`,
-          }}
-        >
-          <img
-            src={robots[currentRobot].image}
-            alt={robots[currentRobot].name}
-            className="w-full h-full object-contain"
-          />
-        </div>
+    <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-10">
+      <div className="relative w-screen h-screen flex items-center justify-center">
+        <img
+          src={robots[currentRobot].image}
+          alt={robots[currentRobot].name}
+          className="max-w-[50vw] max-h-[80vh] object-contain"
+        />
       </div>
     </div>
   );
