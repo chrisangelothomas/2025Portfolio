@@ -6,47 +6,41 @@ const robots = [
 ];
 
 export default function RobotShowcase() {
-  const [currentRobot, setCurrentRobot] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const windowHeight = window.innerHeight;
-      
-      // Each robot gets 3 screen heights of scroll
-      const sectionHeight = windowHeight * 3;
-      const robotIndex = Math.floor(scrollY / sectionHeight);
-      const clampedIndex = Math.min(Math.max(robotIndex, 0), robots.length - 1);
-      
-      setCurrentRobot(clampedIndex);
+      setScrollY(window.scrollY);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Calculate scroll progress within current robot section
-  const scrollY = window.scrollY;
-  const windowHeight = window.innerHeight;
-  const sectionHeight = windowHeight * 3;
-  const sectionProgress = (scrollY % sectionHeight) / sectionHeight;
-  
-  // Robot moves up as you scroll (0 = bottom, 1 = top)
-  const translateY = sectionProgress * 100;
-
   return (
-    <div className="fixed inset-0 flex items-end justify-center pointer-events-none z-10">
-      <div className="relative w-screen h-screen flex items-center justify-center">
-        <div
-          className="transition-transform duration-100 ease-linear"
-          style={{
-            transform: `translateY(-${translateY}%)`,
-          }}
-        >
+    <div className="fixed inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
+      {/* Container that moves up with scroll */}
+      <div
+        className="flex flex-col items-center"
+        style={{
+          transform: `translateY(-${scrollY * 0.5}px)`,
+        }}
+      >
+        {/* First Robot (K-Bot) */}
+        <div className="mb-32">
           <img
-            src={robots[currentRobot].image}
-            alt={robots[currentRobot].name}
-            className="w-[100vw] h-[100vh] object-contain"
+            src={robots[0].image}
+            alt={robots[0].name}
+            className="w-[200vw] h-[200vh] object-contain"
+          />
+        </div>
+        
+        {/* Second Robot (Z-Bot) */}
+        <div>
+          <img
+            src={robots[1].image}
+            alt={robots[1].name}
+            className="w-[200vw] h-[200vh] object-contain"
           />
         </div>
       </div>

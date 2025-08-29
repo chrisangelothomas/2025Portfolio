@@ -6,8 +6,8 @@ import ProfileSection from '../components/ProfileSection';
 const Index = () => {
   const [currentRobot, setCurrentRobot] = useState(0);
 
-  // Create scroll height for 2 robots (3 screen heights per robot)
-  const scrollHeight = `${300 * 2}vh`; // 2 robots
+  // Create enough scroll height to see both robots
+  const scrollHeight = `800vh`;
 
   return (
     <div className="bg-background min-h-screen font-geometric">
