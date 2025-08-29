@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import kBotImage from '../assets/k-bot.png';
 import zBotImage from '../assets/z-bot.png';
 import pBotImage from '../assets/p-bot.png';
 import prismaxImage from '../assets/prismax.png';
 
 const robots = [
-  { name: 'K-Bot', image: kBotImage, description: 'Advanced humanoid platform' },
+  { name: 'K-Bot', image: '/lovable-uploads/b1ef3f37-b46d-4a5b-8911-cfcbece79ac4.png', description: 'Advanced humanoid platform' },
   { name: 'Z-Bot', image: zBotImage, description: 'Compact tactical unit' },
   { name: 'P-Bot', image: pBotImage, description: 'Precision assembly robot' },
   { name: 'PrismaX', image: prismaxImage, description: 'Luxury service android' },
