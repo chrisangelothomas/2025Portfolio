@@ -23,9 +23,9 @@ export default function Navigation({ currentRobot, onRobotSelect }: NavigationPr
           <li key={robot}>
             <button
               onClick={() => handleRobotClick(index)}
-              className={`font-geometric text-xl font-light tracking-wide transition-all duration-300 hover:text-accent text-left block ${
+              className={`font-geometric text-xl font-light tracking-wide transition-all duration-300 hover:text-foreground text-left block ${
                 index === currentRobot
-                  ? 'text-accent font-medium drop-shadow-cyber'
+                  ? 'text-foreground font-bold opacity-100'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
