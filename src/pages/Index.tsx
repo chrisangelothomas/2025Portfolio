@@ -1,11 +1,59 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useState, useEffect } from 'react';
+import RobotShowcase from '../components/RobotShowcase';
+import Navigation from '../components/Navigation';
+import ProfileSection from '../components/ProfileSection';
 
 const Index = () => {
+  const [currentRobot, setCurrentRobot] = useState(0);
+
+  // Create enough scroll height for smooth robot transitions
+  const scrollHeight = '500vh';
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="bg-background min-h-screen font-geometric">
+      {/* Main Content Container */}
+      <div className="relative">
+        {/* Fixed Layout Container */}
+        <div className="fixed inset-0 grid grid-cols-12 gap-8 px-16 py-24 z-20">
+          {/* Left Profile Section - Sticky */}
+          <div className="col-span-4 flex items-start">
+            <ProfileSection />
+          </div>
+
+          {/* Center Robot Display - Handled by RobotShowcase */}
+          <div className="col-span-4"></div>
+
+          {/* Right Navigation */}
+          <div className="col-span-4 flex justify-end">
+            <Navigation 
+              currentRobot={currentRobot} 
+              onRobotSelect={setCurrentRobot}
+            />
+          </div>
+        </div>
+
+        {/* Robot Showcase */}
+        <RobotShowcase />
+
+        {/* Scroll Spacer */}
+        <div style={{ height: scrollHeight }} className="relative">
+          {/* Subtle grid pattern overlay */}
+          <div 
+            className="absolute inset-0 opacity-5"
+            style={{
+              backgroundImage: `
+                linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px)
+              `,
+              backgroundSize: '50px 50px'
+            }}
+          ></div>
+        </div>
+
+        {/* Subtle ambient lighting effect */}
+        <div className="fixed inset-0 pointer-events-none z-0">
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-accent/5 rounded-full blur-3xl"></div>
+        </div>
       </div>
     </div>
   );
