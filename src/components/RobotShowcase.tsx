@@ -38,8 +38,8 @@ export default function RobotShowcase() {
   const revealHeight = Math.min(robotProgress * 2, 1); // Reveal full robot by 50% scroll through each section
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-10">
-      <div className="relative w-96 h-screen overflow-hidden">
+    <div className="fixed inset-0 flex items-end justify-center pointer-events-none z-10">
+      <div className="relative w-[60vw] h-[60vh] overflow-hidden bg-background">
         {robots.map((robot, index) => (
           <div
             key={robot.name}
@@ -48,7 +48,7 @@ export default function RobotShowcase() {
             }`}
           >
             <div
-              className="absolute bottom-0 w-full transition-transform duration-500 ease-out"
+              className="absolute bottom-0 w-full h-full transition-transform duration-500 ease-out bg-background"
               style={{
                 transform: `translateY(${(1 - revealHeight) * 60}%)`,
               }}
@@ -56,7 +56,7 @@ export default function RobotShowcase() {
               <img
                 src={robot.image}
                 alt={robot.name}
-                className="w-full h-auto object-contain drop-shadow-2xl"
+                className="w-full h-full object-contain drop-shadow-2xl"
                 style={{
                   filter: 'drop-shadow(0 0 40px rgba(0, 255, 255, 0.3))',
                 }}

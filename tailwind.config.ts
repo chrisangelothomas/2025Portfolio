@@ -19,7 +19,7 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'geometric': ['Space Grotesk', 'system-ui', 'sans-serif'],
+				'geometric': ['DM Sans', 'system-ui', 'sans-serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',

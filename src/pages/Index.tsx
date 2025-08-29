@@ -15,16 +15,16 @@ const Index = () => {
       <div className="relative">
         {/* Fixed Layout Container */}
         <div className="fixed inset-0 grid grid-cols-12 gap-8 px-16 py-24 z-20">
-          {/* Left Profile Section - Sticky */}
-          <div className="col-span-4 flex items-start">
+          {/* Left Profile Section - Centered */}
+          <div className="col-span-4 flex items-center">
             <ProfileSection />
           </div>
 
           {/* Center Robot Display - Handled by RobotShowcase */}
           <div className="col-span-4"></div>
 
-          {/* Right Navigation */}
-          <div className="col-span-4 flex justify-end">
+          {/* Right Navigation - Centered */}
+          <div className="col-span-4 flex justify-end items-center">
             <Navigation 
               currentRobot={currentRobot} 
               onRobotSelect={setCurrentRobot}
