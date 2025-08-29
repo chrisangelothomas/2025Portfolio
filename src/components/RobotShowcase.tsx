@@ -23,47 +23,82 @@ export default function RobotShowcase() {
       
       setScrollProgress(progress);
       
-      // Calculate which robot should be displayed based on scroll
-      const robotIndex = Math.floor(progress * robots.length);
+      // Calculate which robot should be displayed based on scroll with smoother transitions
+      const sectionProgress = progress * robots.length;
+      const robotIndex = Math.floor(sectionProgress);
       const clampedIndex = Math.min(robotIndex, robots.length - 1);
-      setCurrentRobot(clampedIndex);
+      
+      // Only update if we've crossed a threshold for smoother snapping
+      const threshold = 0.1; // 10% into each section
+      const sectionOffset = sectionProgress - robotIndex;
+      
+      if (sectionOffset > threshold || robotIndex === 0) {
+        setCurrentRobot(clampedIndex);
+      }
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Calculate robot reveal progress (0-1 for each robot)
-  const robotProgress = (scrollProgress * robots.length) % 1;
-  const revealHeight = Math.min(robotProgress * 2, 1); // Reveal full robot by 50% scroll through each section
+  // Calculate robot reveal and transition progress
+  const sectionProgress = (scrollProgress * robots.length) % 1;
+  const revealHeight = Math.min(sectionProgress * 1.5, 1); // Robot moves up faster
+  const nextRobotProgress = Math.max(0, (sectionProgress - 0.7) * 3.33); // Next robot starts appearing at 70% through section
 
   return (
-    <div className="fixed inset-0 flex items-end justify-center pointer-events-none z-10">
-      <div className="relative w-[60vw] h-[60vh] overflow-hidden bg-background">
-        {robots.map((robot, index) => (
-          <div
-            key={robot.name}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              index === currentRobot ? 'opacity-100' : 'opacity-0'
-            }`}
-          >
-            <div
-              className="absolute bottom-0 w-full h-full transition-transform duration-500 ease-out bg-background"
-              style={{
-                transform: `translateY(${(1 - revealHeight) * 60}%)`,
-              }}
-            >
-              <img
-                src={robot.image}
-                alt={robot.name}
-                className="w-full h-full object-contain drop-shadow-2xl"
-                style={{
-                  filter: 'drop-shadow(0 0 40px rgba(0, 255, 255, 0.3))',
-                }}
-              />
+    <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-10" style={{ top: '-10vh' }}>
+      <div className="relative w-[96vw] h-[96vh] overflow-hidden bg-background">
+        {robots.map((robot, index) => {
+          const isCurrentRobot = index === currentRobot;
+          const isNextRobot = index === currentRobot + 1;
+          
+          return (
+            <div key={robot.name}>
+              {/* Current Robot */}
+              {isCurrentRobot && (
+                <div className="absolute inset-0">
+                  <div
+                    className="absolute bottom-0 w-full h-full transition-transform duration-300 ease-out bg-background"
+                    style={{
+                      transform: `translateY(${(1 - revealHeight) * 40}%)`,
+                    }}
+                  >
+                    <img
+                      src={robot.image}
+                      alt={robot.name}
+                      className="w-full h-full object-contain drop-shadow-2xl"
+                      style={{
+                        filter: 'drop-shadow(0 0 40px rgba(0, 255, 255, 0.3))',
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+              
+              {/* Next Robot sliding up from below */}
+              {isNextRobot && nextRobotProgress > 0 && (
+                <div className="absolute inset-0">
+                  <div
+                    className="absolute bottom-0 w-full h-full transition-transform duration-300 ease-out bg-background"
+                    style={{
+                      transform: `translateY(${100 - (nextRobotProgress * 100)}%)`,
+                    }}
+                  >
+                    <img
+                      src={robot.image}
+                      alt={robot.name}
+                      className="w-full h-full object-contain drop-shadow-2xl"
+                      style={{
+                        filter: 'drop-shadow(0 0 40px rgba(0, 255, 255, 0.3))',
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
