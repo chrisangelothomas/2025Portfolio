@@ -11,10 +11,10 @@ export default function ZBotShowcase() {
   const location = useLocation();
   const [isPageTransitioning, setIsPageTransitioning] = useState(false);
 
-  // Handle page transition animations - smoother timing
+  // Minimal page transition - just for initial load
   useEffect(() => {
     setIsPageTransitioning(true);
-    const timer = setTimeout(() => setIsPageTransitioning(false), 300);
+    const timer = setTimeout(() => setIsPageTransitioning(false), 100);
     return () => clearTimeout(timer);
   }, [location.pathname]);
 
@@ -27,7 +27,7 @@ export default function ZBotShowcase() {
         style={{
           transform: `translateY(${50 - virtualScrollY * 0.1}vh) ${
             isOverscrolling ? `translateY(${isScrollingUp ? springTransform : -springTransform}px)` : ''
-          } ${isPageTransitioning ? 'translateY(-10vh)' : ''}`,
+          }`,
         }}
       >
         <img

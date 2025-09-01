@@ -99,16 +99,19 @@ export const useOverscrollNavigation = ({
           setIsOverscrolling(false);
           accumulatedOverscrollRef.current = 0;
           
-          // Position scroll for optimal user experience
-          requestAnimationFrame(() => {
+          // Position scroll for optimal user experience with delay for page load
+          setTimeout(() => {
             if (tryingToScrollUp) {
-              // When going up, start at bottom so content can be read from top
+              // Start at bottom for visual continuity, then scroll to top
               window.scrollTo(0, document.documentElement.scrollHeight);
+              setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }, 100);
             } else {
-              // When going down, start at top
+              // For downward scroll, start at top
               window.scrollTo(0, 0);
             }
-          });
+          }, 50);
         }, 200);
       }
     }
