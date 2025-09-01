@@ -17,7 +17,7 @@ export default function RobotShowcase() {
       <div
         className="flex flex-col items-center"
         style={{
-          transform: `translateY(${200 - scrollY * 0.5}px)`, // Start with 50% visible
+          transform: `translateY(${50 - scrollY * 0.5}vh)`, // Start much lower, showing only bottom half
         }}
       >
         <img
