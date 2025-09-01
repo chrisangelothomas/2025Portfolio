@@ -49,7 +49,7 @@ export const useOverscrollNavigation = ({
   }, [isTransitioning, isOverscrolling]);
 
   const handleWheel = useCallback((e: WheelEvent) => {
-    if (isTransitioning || !isAtBoundaryRef.current) return;
+    if (isTransitioning) return;
 
     const currentScroll = window.scrollY;
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
@@ -61,15 +61,26 @@ export const useOverscrollNavigation = ({
     const tryingToScrollUp = e.deltaY < 0 && atTop && prevPage;
 
     if (tryingToScrollDown || tryingToScrollUp) {
-      e.preventDefault(); // Only prevent default when overscrolling
+      e.preventDefault();
       
       setIsOverscrolling(true);
       
-      // Progressive resistance - smoother calculation
+      // Progressive resistance with viscous feel
       const currentProgress = accumulatedOverscrollRef.current / thresholdPx;
-      const resistance = Math.max(0.3, 1 - (currentProgress * 0.6)); // Smoother resistance curve
+      const baseResistance = Math.max(0.1, 1 - (currentProgress * 0.8));
       
-      accumulatedOverscrollRef.current += Math.abs(e.deltaY) * 0.4 * resistance;
+      // Allow some actual scroll movement with decreasing amount
+      const scrollResistance = Math.max(0.05, 1 - (currentProgress * 2));
+      const allowedScroll = Math.abs(e.deltaY) * scrollResistance * 0.3;
+      
+      if (tryingToScrollDown && currentScroll < maxScroll + 20) {
+        window.scrollBy(0, allowedScroll);
+      } else if (tryingToScrollUp && currentScroll > -20) {
+        window.scrollBy(0, -allowedScroll);
+      }
+      
+      // Accumulate overscroll with viscous resistance
+      accumulatedOverscrollRef.current += Math.abs(e.deltaY) * 0.4 * baseResistance;
       const newAmount = accumulatedOverscrollRef.current;
       
       setOverscrollAmount(newAmount);
@@ -88,7 +99,6 @@ export const useOverscrollNavigation = ({
             accumulatedOverscrollRef.current = 0;
             
             if (tryingToScrollUp) {
-              // Scroll to bottom of previous page
               requestAnimationFrame(() => {
                 window.scrollTo(0, document.documentElement.scrollHeight);
               });
