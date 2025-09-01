@@ -17,7 +17,7 @@ export default function ZBotShowcase() {
       <div
         className="flex flex-col items-center"
         style={{
-          transform: `translateY(${50 - scrollY * 0.5}vh)`, // Start much lower, showing only bottom half
+          transform: `translateY(${50 - scrollY * 0.1}vh)`, // Much less sensitive scroll
         }}
       >
         <img

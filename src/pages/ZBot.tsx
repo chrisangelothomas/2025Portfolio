@@ -4,7 +4,7 @@ import ProfileSection from '../components/ProfileSection';
 
 const ZBot = () => {
   // Create enough scroll height to see the full robot
-  const scrollHeight = `400vh`;
+  const scrollHeight = `200vh`;
 
   return (
     <div className="bg-background min-h-screen font-geometric">
