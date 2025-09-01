@@ -1,23 +1,20 @@
 import { useEffect, useState } from 'react';
+import { useOverscrollNavigation } from '../hooks/useOverscrollNavigation';
 
 export default function RobotShowcase() {
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  const { scrollY, springTransform, isTransitioning } = useOverscrollNavigation({
+    nextPage: '/zbot',
+    threshold: 30
+  });
 
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
       <div
-        className="flex flex-col items-center"
+        className={`flex flex-col items-center transition-transform duration-200 ${
+          isTransitioning ? 'transition-transform duration-500 ease-out' : ''
+        }`}
         style={{
-          transform: `translateY(${50 - scrollY * 0.1}vh)`, // Much less sensitive scroll
+          transform: `translateY(${50 - scrollY * 0.1 + springTransform}vh)`,
         }}
       >
         <img
