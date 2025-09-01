@@ -43,6 +43,7 @@ export const useOverscrollNavigation = ({
         setIsOverscrolling(false);
         setOverscrollAmount(0);
         accumulatedOverscrollRef.current = 0;
+        document.body.style.transform = ''; // Reset page transform
       }
       return;
     }
@@ -72,12 +73,12 @@ export const useOverscrollNavigation = ({
       accumulatedOverscrollRef.current += Math.abs(e.deltaY) * 0.3 * resistance;
       const newAmount = accumulatedOverscrollRef.current;
       
-      // Add responsive page movement during overscroll
-      const scrollMovement = Math.min(currentProgress * 20, 10); // Max 10px movement
+      // Create viscous page movement by transforming the body
+      const scrollMovement = Math.min(currentProgress * 30, 15); // Max 15px movement
       if (tryingToScrollDown) {
-        window.scrollBy(0, scrollMovement * 0.5);
+        document.body.style.transform = `translateY(-${scrollMovement}px)`;
       } else if (tryingToScrollUp) {
-        window.scrollBy(0, -scrollMovement * 0.5);
+        document.body.style.transform = `translateY(${scrollMovement}px)`;
       }
       
       setOverscrollAmount(newAmount);
@@ -94,6 +95,7 @@ export const useOverscrollNavigation = ({
             setOverscrollAmount(0);
             setIsOverscrolling(false);
             accumulatedOverscrollRef.current = 0;
+            document.body.style.transform = ''; // Reset page transform
             
             if (tryingToScrollUp) {
               // Scroll to bottom of previous page
@@ -120,6 +122,7 @@ export const useOverscrollNavigation = ({
           if (newAmount < 2) {
             setIsOverscrolling(false);
             accumulatedOverscrollRef.current = 0;
+            document.body.style.transform = ''; // Reset page transform
             return 0;
           }
           return newAmount;

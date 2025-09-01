@@ -15,13 +15,13 @@ export default function OverscrollIndicator({
   const opacity = Math.min(clampedProgress * 2, 1); // Fade in as progress increases
 
   return (
-    <div className={`fixed z-50 right-8 ${
-      direction === 'down' ? 'bottom-1/2 translate-y-1/2' : 'top-1/2 -translate-y-1/2'
+    <div className={`fixed z-50 left-1/2 transform -translate-x-1/2 ${
+      direction === 'down' ? 'bottom-8' : 'top-8'
     } transition-opacity duration-200`}
     style={{ opacity }}>
-      <div className="flex flex-col items-center">
-        {/* Vertical progress bar */}
-        <div className={`w-1 h-20 bg-border/30 rounded-full overflow-hidden ${
+      <div className="flex flex-col items-center space-y-1">
+        {/* Compact vertical progress bar */}
+        <div className={`w-0.5 h-12 bg-border/30 rounded-full overflow-hidden ${
           direction === 'up' ? 'rotate-180' : ''
         }`}>
           <div 
@@ -30,8 +30,8 @@ export default function OverscrollIndicator({
           />
         </div>
         
-        {/* Direction indicator */}
-        <div className={`mt-2 w-1.5 h-1.5 rounded-full transition-all duration-200 ${
+        {/* Small completion dot */}
+        <div className={`w-1 h-1 rounded-full transition-all duration-200 ${
           progress >= 1 ? 'bg-primary' : 'bg-border/50'
         }`} />
       </div>
