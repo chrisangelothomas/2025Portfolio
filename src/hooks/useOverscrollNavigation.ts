@@ -111,27 +111,45 @@ export const useOverscrollNavigation = ({
     }
   }, [navigate, nextPage, prevPage, thresholdPx, isTransitioning]);
 
-  // Smoother spring back animation with less frequent updates
+  // Bouncy spring back animation
   useEffect(() => {
     if (isOverscrolling && overscrollAmount > 0 && !isTransitioning) {
       const springBack = () => {
         setOverscrollAmount(prev => {
-          const newAmount = prev * 0.85; // Faster spring back
+          // Bouncy spring physics
+          const progress = prev / thresholdPx;
+          const springForce = 0.88 + (Math.sin(progress * Math.PI * 4) * 0.02); // Add bounce
+          const newAmount = prev * springForce;
           accumulatedOverscrollRef.current = newAmount;
+          
+          // Bounce virtual scroll back too
+          setVirtualScrollY(current => {
+            const currentScroll = window.scrollY;
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+            const atBottom = currentScroll >= maxScroll;
+            const atTop = currentScroll <= 0;
+            
+            if (atBottom || atTop) {
+              return currentScroll + (current - currentScroll) * springForce;
+            }
+            return current;
+          });
           
           if (newAmount < 2) {
             setIsOverscrolling(false);
             accumulatedOverscrollRef.current = 0;
+            // Snap virtual scroll back to actual scroll
+            setVirtualScrollY(window.scrollY);
             return 0;
           }
           return newAmount;
         });
       };
       
-      const timer = setTimeout(springBack, 32); // 30fps instead of 60fps
+      const timer = setTimeout(springBack, 16); // 60fps for smoother bounce
       return () => clearTimeout(timer);
     }
-  }, [isOverscrolling, overscrollAmount, isTransitioning]);
+  }, [isOverscrolling, overscrollAmount, isTransitioning, thresholdPx]);
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -143,9 +161,10 @@ export const useOverscrollNavigation = ({
     };
   }, [handleScroll, handleWheel]);
 
-  // Calculate spring transform
+  // Calculate spring transform - 15% of viewport height
+  const maxTransform = window.innerHeight * 0.15;
   const springTransform = isOverscrolling 
-    ? Math.sin((overscrollAmount / thresholdPx) * Math.PI * 0.5) * 15 
+    ? Math.sin((overscrollAmount / thresholdPx) * Math.PI * 0.5) * maxTransform
     : 0;
 
   return {

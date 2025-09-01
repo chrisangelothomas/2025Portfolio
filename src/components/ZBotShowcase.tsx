@@ -14,7 +14,7 @@ export default function ZBotShowcase() {
           isTransitioning ? 'transition-transform duration-500 ease-out' : ''
         }`}
         style={{
-          transform: `translateY(${50 - virtualScrollY * 0.1}vh) ${isOverscrolling ? `translateY(${springTransform}px)` : ''}`,
+          transform: `translateY(${50 - virtualScrollY * 0.1}vh) ${isOverscrolling ? `translateY(${-springTransform}px)` : ''}`,
         }}
       >
         <img
