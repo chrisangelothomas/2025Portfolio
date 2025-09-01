@@ -72,6 +72,14 @@ export const useOverscrollNavigation = ({
       accumulatedOverscrollRef.current += Math.abs(e.deltaY) * 0.3 * resistance;
       const newAmount = accumulatedOverscrollRef.current;
       
+      // Add responsive page movement during overscroll
+      const scrollMovement = Math.min(currentProgress * 20, 10); // Max 10px movement
+      if (tryingToScrollDown) {
+        window.scrollBy(0, scrollMovement * 0.5);
+      } else if (tryingToScrollUp) {
+        window.scrollBy(0, -scrollMovement * 0.5);
+      }
+      
       setOverscrollAmount(newAmount);
       
       // Check if exceeded threshold for navigation
