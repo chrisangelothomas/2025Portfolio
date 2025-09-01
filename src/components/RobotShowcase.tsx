@@ -23,7 +23,7 @@ export default function RobotShowcase() {
       <div
         className="flex flex-col items-center"
         style={{
-          transform: `translateY(${200 - scrollY * 0.5}px)`, // Start closer to viewport
+          transform: `translateY(${80 - scrollY * 0.3}vh)`, // Start well below viewport
         }}
       >
         {/* First Robot (K-Bot) */}
