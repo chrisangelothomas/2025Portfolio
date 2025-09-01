@@ -92,21 +92,24 @@ export const useOverscrollNavigation = ({
         
         setTimeout(() => {
           navigate(targetPage!);
-          setTimeout(() => {
-            setIsTransitioning(false);
-            setOverscrollAmount(0);
-            setIsOverscrolling(false);
-            accumulatedOverscrollRef.current = 0;
-            
+          
+          // Reset states immediately for smoother transition
+          setIsTransitioning(false);
+          setOverscrollAmount(0);
+          setIsOverscrolling(false);
+          accumulatedOverscrollRef.current = 0;
+          
+          // Position scroll for optimal user experience
+          requestAnimationFrame(() => {
             if (tryingToScrollUp) {
-              requestAnimationFrame(() => {
-                window.scrollTo(0, document.documentElement.scrollHeight);
-              });
+              // When going up, start at bottom so content can be read from top
+              window.scrollTo(0, document.documentElement.scrollHeight);
             } else {
+              // When going down, start at top
               window.scrollTo(0, 0);
             }
-          }, 100);
-        }, 300);
+          });
+        }, 200);
       }
     }
   }, [navigate, nextPage, prevPage, thresholdPx, isTransitioning]);
