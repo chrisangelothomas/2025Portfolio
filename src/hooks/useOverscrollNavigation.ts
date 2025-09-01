@@ -65,12 +65,12 @@ export const useOverscrollNavigation = ({
       
       setIsOverscrolling(true);
       
-      // Progressive resistance - the closer to threshold, the more resistance
+      // Progressive resistance - smoother calculation
       const currentProgress = accumulatedOverscrollRef.current / thresholdPx;
-      const resistance = Math.max(0.1, 1 - Math.pow(currentProgress, 1.5)); // Exponential resistance
+      const resistance = Math.max(0.2, 1 - (currentProgress * 0.7)); // Gentler resistance curve
       
-      accumulatedOverscrollRef.current += Math.abs(e.deltaY) * 0.5 * resistance;
-      const newAmount = Math.min(accumulatedOverscrollRef.current, thresholdPx * 1.5); // Allow 50% overshoot
+      accumulatedOverscrollRef.current += Math.abs(e.deltaY) * 0.3 * resistance;
+      const newAmount = accumulatedOverscrollRef.current;
       
       setOverscrollAmount(newAmount);
       
@@ -101,15 +101,15 @@ export const useOverscrollNavigation = ({
     }
   }, [navigate, nextPage, prevPage, thresholdPx, isTransitioning]);
 
-  // Spring back animation
+  // Smoother spring back animation with less frequent updates
   useEffect(() => {
     if (isOverscrolling && overscrollAmount > 0 && !isTransitioning) {
       const springBack = () => {
         setOverscrollAmount(prev => {
-          const newAmount = prev * 0.9; // Spring back
+          const newAmount = prev * 0.85; // Faster spring back
           accumulatedOverscrollRef.current = newAmount;
           
-          if (newAmount < 1) {
+          if (newAmount < 2) {
             setIsOverscrolling(false);
             accumulatedOverscrollRef.current = 0;
             return 0;
@@ -118,7 +118,7 @@ export const useOverscrollNavigation = ({
         });
       };
       
-      const timer = setTimeout(springBack, 16); // 60fps
+      const timer = setTimeout(springBack, 32); // 30fps instead of 60fps
       return () => clearTimeout(timer);
     }
   }, [isOverscrolling, overscrollAmount, isTransitioning]);
