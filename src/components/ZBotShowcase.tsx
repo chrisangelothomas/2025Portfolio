@@ -26,11 +26,11 @@ export default function ZBotShowcase() {
     <div className="fixed inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
       <div
         className={`flex flex-col items-center ${
-          isTransitioning || isPageTransitioning ? 'transition-transform duration-800 ease-out' : ''
+          isPageTransitioning ? 'transition-transform duration-800 ease-out' : ''
         }`}
         style={{
           transform: `translateY(${
-            isInitialLoad ? '-70vh' : (50 - virtualScrollY * 0.1) + 'vh'
+            isPageTransitioning && isInitialLoad ? '100vh' : (50 - virtualScrollY * 0.1) + 'vh'
           }) ${
             isOverscrolling ? `translateY(${isScrollingUp ? springTransform : -springTransform}px)` : ''
           }`,
