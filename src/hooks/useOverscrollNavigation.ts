@@ -13,6 +13,7 @@ export const useOverscrollNavigation = ({
   threshold = 30
 }: UseOverscrollNavigationProps) => {
   const [scrollY, setScrollY] = useState(0);
+  const [virtualScrollY, setVirtualScrollY] = useState(0); // Continuous scroll including overscroll
   const [overscrollAmount, setOverscrollAmount] = useState(0);
   const [isOverscrolling, setIsOverscrolling] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -29,6 +30,7 @@ export const useOverscrollNavigation = ({
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     
     setScrollY(currentScroll);
+    setVirtualScrollY(currentScroll); // Update virtual scroll with actual scroll
     
     // Check if we're at boundaries
     const atBottom = currentScroll >= maxScroll;
@@ -69,14 +71,12 @@ export const useOverscrollNavigation = ({
       const currentProgress = accumulatedOverscrollRef.current / thresholdPx;
       const baseResistance = Math.max(0.1, 1 - (currentProgress * 0.8));
       
-      // Allow some actual scroll movement with decreasing amount
-      const scrollResistance = Math.max(0.05, 1 - (currentProgress * 2));
-      const allowedScroll = Math.abs(e.deltaY) * scrollResistance * 0.3;
-      
-      if (tryingToScrollDown && currentScroll < maxScroll + 20) {
-        window.scrollBy(0, allowedScroll);
-      } else if (tryingToScrollUp && currentScroll > -20) {
-        window.scrollBy(0, -allowedScroll);
+      // Continue virtual scroll movement for smooth robot animation
+      const virtualScrollDelta = Math.abs(e.deltaY) * 0.3;
+      if (tryingToScrollDown) {
+        setVirtualScrollY(prev => prev + virtualScrollDelta);
+      } else if (tryingToScrollUp) {
+        setVirtualScrollY(prev => Math.max(0, prev - virtualScrollDelta));
       }
       
       // Accumulate overscroll with viscous resistance
@@ -150,6 +150,7 @@ export const useOverscrollNavigation = ({
 
   return {
     scrollY,
+    virtualScrollY, // Continuous scroll value for smooth animations
     overscrollAmount,
     isOverscrolling,
     isTransitioning,

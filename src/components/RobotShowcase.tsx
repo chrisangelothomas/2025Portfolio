@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useOverscrollNavigation } from '../hooks/useOverscrollNavigation';
 
 export default function RobotShowcase() {
-  const { scrollY, springTransform, isTransitioning, isOverscrolling } = useOverscrollNavigation({
+  const { virtualScrollY, springTransform, isTransitioning, isOverscrolling } = useOverscrollNavigation({
     nextPage: '/zbot',
     threshold: 30
   });
@@ -14,7 +14,7 @@ export default function RobotShowcase() {
           isTransitioning ? 'transition-transform duration-500 ease-out' : ''
         }`}
         style={{
-          transform: `translateY(${50 - scrollY * 0.1}vh) ${isOverscrolling ? `translateY(${springTransform}px)` : ''}`,
+          transform: `translateY(${50 - virtualScrollY * 0.1}vh) ${isOverscrolling ? `translateY(${springTransform}px)` : ''}`,
         }}
       >
         <img
