@@ -23,7 +23,7 @@ export default function RobotShowcase() {
       <div
         className="flex flex-col items-center"
         style={{
-          transform: `translateY(${80 - scrollY * 0.3}vh)`, // Start well below viewport
+          transform: `translateY(${-scrollY * 0.5}px)`,
         }}
       >
         {/* First Robot (K-Bot) */}
@@ -31,7 +31,7 @@ export default function RobotShowcase() {
           <img
             src={robots[0].image}
             alt={robots[0].name}
-            className="w-[200vw] h-[200vh] object-contain"
+            className="w-96 h-96 object-contain"
           />
         </div>
         
@@ -40,7 +40,7 @@ export default function RobotShowcase() {
           <img
             src={robots[1].image}
             alt={robots[1].name}
-            className="w-[200vw] h-[200vh] object-contain"
+            className="w-96 h-96 object-contain"
           />
         </div>
       </div>

@@ -6,11 +6,10 @@ interface NavigationProps {
 const robots = ['K-Bot', 'Z-Bot'];
 
 export default function Navigation({ currentRobot, onRobotSelect }: NavigationProps) {
-const handleRobotClick = (index: number) => {
-    const routes = ['/', '/zbot'];
-    if (routes[index]) {
-      window.location.href = routes[index];
-    }
+  const handleRobotClick = (index: number) => {
+    // Scroll to the appropriate section
+    const scrollPosition = (index / robots.length) * (document.documentElement.scrollHeight - window.innerHeight);
+    window.scrollTo({ top: scrollPosition, behavior: 'smooth' });
     onRobotSelect(index);
   };
 
