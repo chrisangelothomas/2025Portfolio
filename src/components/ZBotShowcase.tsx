@@ -31,7 +31,7 @@ export default function ZBotShowcase() {
         }}
       >
         <img
-          src="/lovable-uploads/b1ef3f37-b46d-4a5b-8911-cfcbece79ac4.png"
+          src="/lovable-uploads/0b3292b6-1b3b-488a-8c3b-22fc5249055b.png"
           alt="Z-Bot"
           className="w-[200vw] h-[200vh] object-contain"
         />
