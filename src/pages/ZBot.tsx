@@ -22,7 +22,7 @@ const ZBot = () => {
     <div className="bg-background min-h-screen font-geometric">
       <div className="relative">
         {/* Fixed Layout Container */}
-        <div className="fixed inset-0 grid grid-cols-12 gap-8 px-16 py-24 z-20">
+        <div className="fixed inset-0 grid grid-cols-12 gap-8 px-8 py-8 z-20">
           {/* Left Profile Section */}
           <div className="col-span-4 flex items-center">
             <ProfileSection />

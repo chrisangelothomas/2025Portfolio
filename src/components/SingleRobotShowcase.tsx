@@ -15,7 +15,7 @@ export default function SingleRobotShowcase({ robot }: SingleRobotShowcaseProps)
         <img
           src={robot.image}
           alt={robot.name}
-          className="w-96 h-96 object-contain"
+          className="w-[200vw] h-[200vh] object-contain"
         />
       </div>
     </div>
