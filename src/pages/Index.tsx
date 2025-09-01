@@ -4,6 +4,8 @@ import Navigation from '../components/Navigation';
 import ProfileSection from '../components/ProfileSection';
 
 const Index = () => {
+  // Create enough scroll height to see the full robot
+  const scrollHeight = `400vh`;
 
   return (
     <div className="bg-background min-h-screen font-geometric">
@@ -30,6 +32,9 @@ const Index = () => {
 
         {/* Robot Showcase */}
         <RobotShowcase />
+
+        {/* Scroll Spacer */}
+        <div style={{ height: scrollHeight }} className="relative"></div>
       </div>
     </div>
   );

@@ -3,6 +3,9 @@ import Navigation from '../components/Navigation';
 import ProfileSection from '../components/ProfileSection';
 
 const ZBot = () => {
+  // Create enough scroll height to see the full robot
+  const scrollHeight = `400vh`;
+
   return (
     <div className="bg-background min-h-screen font-geometric">
       {/* Main Content Container */}
@@ -28,6 +31,9 @@ const ZBot = () => {
 
         {/* Robot Showcase */}
         <ZBotShowcase />
+
+        {/* Scroll Spacer */}
+        <div style={{ height: scrollHeight }} className="relative"></div>
       </div>
     </div>
   );
