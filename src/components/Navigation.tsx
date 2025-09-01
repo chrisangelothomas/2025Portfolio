@@ -1,17 +1,17 @@
+import { Link, useLocation } from 'react-router-dom';
+
 interface NavigationProps {
   currentRobot: number;
   onRobotSelect: (index: number) => void;
 }
 
-const robots = ['K-Bot', 'Z-Bot'];
+const robots = [
+  { name: 'K-Bot', path: '/' },
+  { name: 'Z-Bot', path: '/zbot' }
+];
 
 export default function Navigation({ currentRobot, onRobotSelect }: NavigationProps) {
-  const handleRobotClick = (index: number) => {
-    // Scroll to the appropriate section
-    const scrollPosition = (index / robots.length) * (document.documentElement.scrollHeight - window.innerHeight);
-    window.scrollTo({ top: scrollPosition, behavior: 'smooth' });
-    onRobotSelect(index);
-  };
+  const location = useLocation();
 
   return (
     <nav className="space-y-8">
@@ -20,17 +20,17 @@ export default function Navigation({ currentRobot, onRobotSelect }: NavigationPr
       </h2>
       <ul className="space-y-4">
         {robots.map((robot, index) => (
-          <li key={robot}>
-            <button
-              onClick={() => handleRobotClick(index)}
+          <li key={robot.name}>
+            <Link
+              to={robot.path}
               className={`font-geometric text-xl font-light tracking-wide transition-all duration-300 hover:text-foreground text-left block ${
-                index === currentRobot
+                location.pathname === robot.path
                   ? 'text-foreground font-bold opacity-100'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              {robot}
-            </button>
+              {robot.name}
+            </Link>
           </li>
         ))}
       </ul>

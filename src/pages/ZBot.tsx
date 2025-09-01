@@ -1,10 +1,8 @@
-import { useState, useEffect } from 'react';
-import RobotShowcase from '../components/RobotShowcase';
+import ZBotShowcase from '../components/ZBotShowcase';
 import Navigation from '../components/Navigation';
 import ProfileSection from '../components/ProfileSection';
 
-const Index = () => {
-
+const ZBot = () => {
   return (
     <div className="bg-background min-h-screen font-geometric">
       {/* Main Content Container */}
@@ -16,23 +14,23 @@ const Index = () => {
             <ProfileSection />
           </div>
 
-          {/* Center Robot Display - Handled by RobotShowcase */}
+          {/* Center Robot Display - Handled by ZBotShowcase */}
           <div className="col-span-4"></div>
 
           {/* Right Navigation - Centered */}
           <div className="col-span-4 flex justify-end items-center">
             <Navigation 
-              currentRobot={0} 
+              currentRobot={1} 
               onRobotSelect={() => {}}
             />
           </div>
         </div>
 
         {/* Robot Showcase */}
-        <RobotShowcase />
+        <ZBotShowcase />
       </div>
     </div>
   );
 };
 
-export default Index;
+export default ZBot;
