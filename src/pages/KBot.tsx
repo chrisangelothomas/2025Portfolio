@@ -23,7 +23,7 @@ const KBot = () => {
         {/* Fixed Layout Container */}
         <div className="fixed inset-0 grid grid-cols-12 gap-8 px-8 py-8 z-20">
           {/* Left Profile Section */}
-          <div className="col-span-4 flex items-start pt-16">
+          <div className="col-span-4 flex items-start pt-32">
             <ProfileSection />
           </div>
 
@@ -31,7 +31,7 @@ const KBot = () => {
           <div className="col-span-4"></div>
 
           {/* Right Navigation */}
-          <div className="col-span-4 flex justify-end items-center">
+          <div className="col-span-4 flex justify-end items-start pt-32">
             <Navigation 
               currentRobot={0} 
               onRobotSelect={() => {}}
