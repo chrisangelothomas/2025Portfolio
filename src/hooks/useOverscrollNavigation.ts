@@ -43,7 +43,6 @@ export const useOverscrollNavigation = ({
         setIsOverscrolling(false);
         setOverscrollAmount(0);
         accumulatedOverscrollRef.current = 0;
-        document.body.style.transform = ''; // Reset page transform
       }
       return;
     }
@@ -68,18 +67,10 @@ export const useOverscrollNavigation = ({
       
       // Progressive resistance - smoother calculation
       const currentProgress = accumulatedOverscrollRef.current / thresholdPx;
-      const resistance = Math.max(0.2, 1 - (currentProgress * 0.7)); // Gentler resistance curve
+      const resistance = Math.max(0.3, 1 - (currentProgress * 0.6)); // Smoother resistance curve
       
-      accumulatedOverscrollRef.current += Math.abs(e.deltaY) * 0.3 * resistance;
+      accumulatedOverscrollRef.current += Math.abs(e.deltaY) * 0.4 * resistance;
       const newAmount = accumulatedOverscrollRef.current;
-      
-      // Create viscous page movement by transforming the body
-      const scrollMovement = Math.min(currentProgress * 30, 15); // Max 15px movement
-      if (tryingToScrollDown) {
-        document.body.style.transform = `translateY(-${scrollMovement}px)`;
-      } else if (tryingToScrollUp) {
-        document.body.style.transform = `translateY(${scrollMovement}px)`;
-      }
       
       setOverscrollAmount(newAmount);
       
@@ -95,7 +86,6 @@ export const useOverscrollNavigation = ({
             setOverscrollAmount(0);
             setIsOverscrolling(false);
             accumulatedOverscrollRef.current = 0;
-            document.body.style.transform = ''; // Reset page transform
             
             if (tryingToScrollUp) {
               // Scroll to bottom of previous page
@@ -122,7 +112,6 @@ export const useOverscrollNavigation = ({
           if (newAmount < 2) {
             setIsOverscrolling(false);
             accumulatedOverscrollRef.current = 0;
-            document.body.style.transform = ''; // Reset page transform
             return 0;
           }
           return newAmount;
