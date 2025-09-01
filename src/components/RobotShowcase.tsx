@@ -10,28 +10,24 @@ export default function RobotShowcase() {
   
   const location = useLocation();
   const [isPageTransitioning, setIsPageTransitioning] = useState(false);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
-  // Page transition with initial load from bottom
+  // Minimal page transition - just for initial load
   useEffect(() => {
     setIsPageTransitioning(true);
-    const timer = setTimeout(() => {
-      setIsPageTransitioning(false);
-      setIsInitialLoad(false);
-    }, 800);
+    const timer = setTimeout(() => setIsPageTransitioning(false), 100);
     return () => clearTimeout(timer);
   }, [location.pathname]);
 
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
       <div
-        className={`flex flex-col items-center transition-transform duration-800 ease-out`}
+        className={`flex flex-col items-center ${
+          isTransitioning || isPageTransitioning ? 'transition-transform duration-500 ease-out' : ''
+        }`}
         style={{
-          transform: isPageTransitioning && isInitialLoad 
-            ? 'translateY(-100vh)' 
-            : `translateY(${50 - virtualScrollY * 0.1}vh) translateY(${
-                isOverscrolling ? (isScrollingDown ? springTransform : -springTransform) : 0
-              }px)`,
+          transform: `translateY(${50 - virtualScrollY * 0.1}vh) ${
+            isOverscrolling ? `translateY(${isScrollingDown ? springTransform : -springTransform}px)` : ''
+          }`,
         }}
       >
         <img
