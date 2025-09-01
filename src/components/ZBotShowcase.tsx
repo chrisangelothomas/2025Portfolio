@@ -22,6 +22,23 @@ export default function ZBotShowcase() {
     return () => clearTimeout(timer);
   }, [location.pathname]);
 
+  // Calculate combined transform values
+  const getTransform = () => {
+    let baseY = 50 - virtualScrollY * 0.1; // Default scroll-based position in vh
+    
+    // Override with initial page transition position
+    if (isPageTransitioning && isInitialLoad) {
+      baseY = 100; // Start from below viewport
+    }
+    
+    // Add overscroll spring effect in pixels (convert to vh for consistency)
+    const springOffset = isOverscrolling 
+      ? (isScrollingUp ? springTransform : -springTransform) / window.innerHeight * 100
+      : 0;
+    
+    return `translateY(${baseY + springOffset}vh)`;
+  };
+
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
       <div
@@ -29,11 +46,7 @@ export default function ZBotShowcase() {
           isPageTransitioning ? 'transition-transform duration-800 ease-out' : ''
         }`}
         style={{
-          transform: `translateY(${
-            isPageTransitioning && isInitialLoad ? '100vh' : (50 - virtualScrollY * 0.1) + 'vh'
-          }) ${
-            isOverscrolling ? `translateY(${isScrollingUp ? springTransform : -springTransform}px)` : ''
-          }`,
+          transform: getTransform(),
         }}
       >
         <img
