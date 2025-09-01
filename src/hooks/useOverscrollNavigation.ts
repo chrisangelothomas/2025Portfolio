@@ -18,11 +18,8 @@ export const useOverscrollNavigation = ({
   const [isTransitioning, setIsTransitioning] = useState(false);
   
   const navigate = useNavigate();
-  const location = useLocation();
-  const maxScrollRef = useRef(0);
-  const lastScrollRef = useRef(0);
-  const velocityRef = useRef(0);
-  
+  const accumulatedOverscrollRef = useRef(0);
+  const isAtBoundaryRef = useRef(false);
   const thresholdPx = (threshold / 100) * window.innerHeight;
 
   const handleScroll = useCallback(() => {
@@ -31,85 +28,111 @@ export const useOverscrollNavigation = ({
     const currentScroll = window.scrollY;
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     
-    // Calculate velocity for momentum
-    velocityRef.current = currentScroll - lastScrollRef.current;
-    lastScrollRef.current = currentScroll;
-    
     setScrollY(currentScroll);
-    maxScrollRef.current = maxScroll;
+    
+    // Check if we're at boundaries
+    const atBottom = currentScroll >= maxScroll;
+    const atTop = currentScroll <= 0;
+    
+    isAtBoundaryRef.current = atBottom || atTop;
+    
+    // Only handle overscroll if we're at a boundary
+    if (!isAtBoundaryRef.current) {
+      // Reset overscroll when scrolling normally
+      if (isOverscrolling) {
+        setIsOverscrolling(false);
+        setOverscrollAmount(0);
+        accumulatedOverscrollRef.current = 0;
+      }
+      return;
+    }
+  }, [isTransitioning, isOverscrolling]);
 
-    // Check if at bottom and trying to scroll further down
-    if (currentScroll >= maxScroll && velocityRef.current > 0 && nextPage) {
+  const handleWheel = useCallback((e: WheelEvent) => {
+    if (isTransitioning || !isAtBoundaryRef.current) return;
+
+    const currentScroll = window.scrollY;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const atBottom = currentScroll >= maxScroll;
+    const atTop = currentScroll <= 0;
+
+    // Check if trying to scroll beyond boundaries
+    const tryingToScrollDown = e.deltaY > 0 && atBottom && nextPage;
+    const tryingToScrollUp = e.deltaY < 0 && atTop && prevPage;
+
+    if (tryingToScrollDown || tryingToScrollUp) {
+      e.preventDefault(); // Only prevent default when overscrolling
+      
       setIsOverscrolling(true);
       
-      // Prevent default scroll behavior
-      const overscroll = velocityRef.current * 3; // Amplify the effect
-      setOverscrollAmount(prev => {
-        const newAmount = Math.min(prev + overscroll, thresholdPx * 1.5);
-        
-        // If exceeded threshold, navigate to next page
-        if (newAmount > thresholdPx && !isTransitioning) {
-          setIsTransitioning(true);
-          setTimeout(() => {
-            navigate(nextPage);
-            // Reset state after navigation
-            setTimeout(() => {
-              setIsTransitioning(false);
-              setOverscrollAmount(0);
-              setIsOverscrolling(false);
-              window.scrollTo(0, 0);
-            }, 100);
-          }, 200);
-        }
-        
-        return newAmount;
-      });
-    }
-    // Check if at top and trying to scroll further up
-    else if (currentScroll <= 0 && velocityRef.current < 0 && prevPage) {
-      setIsOverscrolling(true);
+      // Accumulate overscroll amount
+      accumulatedOverscrollRef.current += Math.abs(e.deltaY) * 0.5;
+      const newAmount = Math.min(accumulatedOverscrollRef.current, thresholdPx * 1.2);
       
-      const overscroll = Math.abs(velocityRef.current) * 3;
-      setOverscrollAmount(prev => {
-        const newAmount = Math.min(prev + overscroll, thresholdPx * 1.5);
+      setOverscrollAmount(newAmount);
+      
+      // Check if exceeded threshold for navigation
+      if (newAmount > thresholdPx && !isTransitioning) {
+        setIsTransitioning(true);
+        const targetPage = tryingToScrollDown ? nextPage : prevPage;
         
-        if (newAmount > thresholdPx && !isTransitioning) {
-          setIsTransitioning(true);
+        setTimeout(() => {
+          navigate(targetPage!);
           setTimeout(() => {
-            navigate(prevPage);
-            setTimeout(() => {
-              setIsTransitioning(false);
-              setOverscrollAmount(0);
-              setIsOverscrolling(false);
+            setIsTransitioning(false);
+            setOverscrollAmount(0);
+            setIsOverscrolling(false);
+            accumulatedOverscrollRef.current = 0;
+            
+            if (tryingToScrollUp) {
               // Scroll to bottom of previous page
-              window.scrollTo(0, document.documentElement.scrollHeight);
-            }, 100);
-          }, 200);
-        }
-        
-        return newAmount;
-      });
-    }
-    else {
-      // Spring back effect when not overscrolling
-      if (isOverscrolling && overscrollAmount > 0) {
-        setOverscrollAmount(prev => Math.max(0, prev * 0.85)); // Spring back
-        if (overscrollAmount < 1) {
-          setIsOverscrolling(false);
-          setOverscrollAmount(0);
-        }
+              requestAnimationFrame(() => {
+                window.scrollTo(0, document.documentElement.scrollHeight);
+              });
+            } else {
+              window.scrollTo(0, 0);
+            }
+          }, 100);
+        }, 300);
       }
     }
-  }, [navigate, nextPage, prevPage, thresholdPx, isTransitioning, isOverscrolling, overscrollAmount]);
+  }, [navigate, nextPage, prevPage, thresholdPx, isTransitioning]);
+
+  // Spring back animation
+  useEffect(() => {
+    if (isOverscrolling && overscrollAmount > 0 && !isTransitioning) {
+      const springBack = () => {
+        setOverscrollAmount(prev => {
+          const newAmount = prev * 0.9; // Spring back
+          accumulatedOverscrollRef.current = newAmount;
+          
+          if (newAmount < 1) {
+            setIsOverscrolling(false);
+            accumulatedOverscrollRef.current = 0;
+            return 0;
+          }
+          return newAmount;
+        });
+      };
+      
+      const timer = setTimeout(springBack, 16); // 60fps
+      return () => clearTimeout(timer);
+    }
+  }, [isOverscrolling, overscrollAmount, isTransitioning]);
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll, { passive: false });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [handleScroll]);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('wheel', handleWheel);
+    };
+  }, [handleScroll, handleWheel]);
 
-  // Calculate spring transform based on overscroll
+  // Calculate spring transform
   const springTransform = isOverscrolling 
-    ? Math.sin((overscrollAmount / thresholdPx) * Math.PI * 0.5) * 20 
+    ? Math.sin((overscrollAmount / thresholdPx) * Math.PI * 0.5) * 15 
     : 0;
 
   return {
