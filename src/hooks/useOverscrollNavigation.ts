@@ -65,9 +65,12 @@ export const useOverscrollNavigation = ({
       
       setIsOverscrolling(true);
       
-      // Accumulate overscroll amount
-      accumulatedOverscrollRef.current += Math.abs(e.deltaY) * 0.5;
-      const newAmount = Math.min(accumulatedOverscrollRef.current, thresholdPx * 1.2);
+      // Progressive resistance - the closer to threshold, the more resistance
+      const currentProgress = accumulatedOverscrollRef.current / thresholdPx;
+      const resistance = Math.max(0.1, 1 - Math.pow(currentProgress, 1.5)); // Exponential resistance
+      
+      accumulatedOverscrollRef.current += Math.abs(e.deltaY) * 0.5 * resistance;
+      const newAmount = Math.min(accumulatedOverscrollRef.current, thresholdPx * 1.5); // Allow 50% overshoot
       
       setOverscrollAmount(newAmount);
       
