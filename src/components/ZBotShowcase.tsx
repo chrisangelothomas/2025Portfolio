@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useOverscrollNavigation } from '../hooks/useOverscrollNavigation';
 
 export default function ZBotShowcase() {
-  const { scrollY, springTransform, isTransitioning } = useOverscrollNavigation({
+  const { scrollY, springTransform, isTransitioning, isOverscrolling } = useOverscrollNavigation({
     prevPage: '/',
     threshold: 30
   });
@@ -10,11 +10,11 @@ export default function ZBotShowcase() {
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
       <div
-        className={`flex flex-col items-center transition-transform duration-200 ${
+        className={`flex flex-col items-center ${
           isTransitioning ? 'transition-transform duration-500 ease-out' : ''
         }`}
         style={{
-          transform: `translateY(${50 - scrollY * 0.1 - springTransform}vh)`,
+          transform: `translateY(${50 - scrollY * 0.1}vh) ${isOverscrolling ? `translateY(${-springTransform}px)` : ''}`,
         }}
       >
         <img
