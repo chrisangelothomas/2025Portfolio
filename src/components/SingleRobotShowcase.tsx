@@ -10,7 +10,7 @@ interface SingleRobotShowcaseProps {
 
 export default function SingleRobotShowcase({ robot }: SingleRobotShowcaseProps) {
   return (
-    <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-10">
+    <div className="fixed inset-0 flex items-start justify-center pointer-events-none z-10 pt-16">
       <div className="flex flex-col items-center">
         <img
           src={robot.image}
