@@ -21,15 +21,15 @@ export default function ZBotShowcase() {
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
       <div
-        className={`flex flex-col items-center transition-transform ease-out ${
-          isPageTransitioning ? 'duration-800' : (isTransitioning ? 'duration-500' : '')
+        className={`flex flex-col items-center ${
+          isPageTransitioning ? 'transition-transform duration-800 ease-out' : (isTransitioning ? 'transition-transform duration-500 ease-out' : '')
         }`}
         style={{
-          transform: `
-            translateY(${50 - virtualScrollY * 0.1}vh)
-            translateY(${isPageTransitioning ? '100vh' : '0vh'})
-            ${isOverscrolling && !isPageTransitioning ? `translateY(${isScrollingUp ? springTransform : -springTransform}px)` : ''}
-          `,
+          transform: isPageTransitioning 
+            ? 'translateY(200vh)' 
+            : `translateY(${50 - virtualScrollY * 0.1}vh) ${
+                isOverscrolling ? `translateY(${isScrollingUp ? springTransform : -springTransform}px)` : ''
+              }`,
         }}
       >
         <img
