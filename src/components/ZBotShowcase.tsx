@@ -13,8 +13,7 @@ export default function ZBotShowcase() {
 
   // Smooth page transition - Z-Bot slides up from below
   useEffect(() => {
-    setIsPageTransitioning(true);
-    const timer = setTimeout(() => setIsPageTransitioning(false), 800);
+    const timer = setTimeout(() => setIsPageTransitioning(false), 50);
     return () => clearTimeout(timer);
   }, [location.pathname]);
 
@@ -27,9 +26,7 @@ export default function ZBotShowcase() {
         style={{
           transform: isPageTransitioning 
             ? 'translateY(200vh)' 
-            : `translateY(${50 - virtualScrollY * 0.1}vh) ${
-                isOverscrolling ? `translateY(${isScrollingUp ? springTransform : -springTransform}px)` : ''
-              }`,
+            : `translateY(${(50 - virtualScrollY * 0.1) + (isOverscrolling ? (isScrollingUp ? springTransform * 0.01 : -springTransform * 0.01) : 0)}vh)`,
         }}
       >
         <img

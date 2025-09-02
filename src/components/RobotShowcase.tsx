@@ -13,8 +13,7 @@ export default function RobotShowcase() {
 
   // Smooth page transition - K-Bot slides down from above
   useEffect(() => {
-    setIsPageTransitioning(true);
-    const timer = setTimeout(() => setIsPageTransitioning(false), 800);
+    const timer = setTimeout(() => setIsPageTransitioning(false), 50);
     return () => clearTimeout(timer);
   }, [location.pathname]);
 
@@ -27,9 +26,7 @@ export default function RobotShowcase() {
         style={{
           transform: isPageTransitioning 
             ? 'translateY(-100vh)' 
-            : `translateY(${50 - virtualScrollY * 0.1}vh) ${
-                isOverscrolling ? `translateY(${isScrollingDown ? springTransform : -springTransform}px)` : ''
-              }`,
+            : `translateY(${(50 - virtualScrollY * 0.1) + (isOverscrolling ? (isScrollingDown ? springTransform * 0.01 : -springTransform * 0.01) : 0)}vh)`,
         }}
       >
         <img
