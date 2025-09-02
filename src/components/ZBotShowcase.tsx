@@ -9,25 +9,27 @@ export default function ZBotShowcase() {
   });
   
   const location = useLocation();
-  const [isPageTransitioning, setIsPageTransitioning] = useState(false);
+  const [isPageTransitioning, setIsPageTransitioning] = useState(true);
 
-  // Minimal page transition - just for initial load
+  // Smooth page transition - Z-Bot slides up from below
   useEffect(() => {
     setIsPageTransitioning(true);
-    const timer = setTimeout(() => setIsPageTransitioning(false), 100);
+    const timer = setTimeout(() => setIsPageTransitioning(false), 800);
     return () => clearTimeout(timer);
   }, [location.pathname]);
 
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
       <div
-        className={`flex flex-col items-center ${
-          isTransitioning || isPageTransitioning ? 'transition-transform duration-500 ease-out' : ''
+        className={`flex flex-col items-center transition-transform ease-out ${
+          isPageTransitioning ? 'duration-800' : (isTransitioning ? 'duration-500' : '')
         }`}
         style={{
-          transform: `translateY(${50 - virtualScrollY * 0.1}vh) ${
-            isOverscrolling ? `translateY(${isScrollingUp ? springTransform : -springTransform}px)` : ''
-          }`,
+          transform: `
+            translateY(${50 - virtualScrollY * 0.1}vh)
+            translateY(${isPageTransitioning ? '100vh' : '0vh'})
+            ${isOverscrolling && !isPageTransitioning ? `translateY(${isScrollingUp ? springTransform : -springTransform}px)` : ''}
+          `,
         }}
       >
         <img
