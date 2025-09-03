@@ -6,10 +6,10 @@ export default function ProfileSection() {
       </h1>
       <div className="space-y-3">
         <p className="font-geometric text-lg font-normal text-foreground tracking-wide leading-relaxed">
-          Product Design Engineer currently shaping humanoid robots at the intersection of function and form.
+          Product Design Engineer building humanoid robots
         </p>
-        <p className="font-geometric text-lg font-normal text-foreground tracking-wide leading-relaxed">
-          Building the fictional future that I want to live in.
+        <p className="font-geometric text-lg font-normal text-foreground tracking-wide leading-relaxed opacity-50">
+          Designing with care and intent, guiding technology to serve humanity in tangible ways.
         </p>
       </div>
     </div>
