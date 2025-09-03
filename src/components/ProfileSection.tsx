@@ -1,10 +1,10 @@
 export default function ProfileSection() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       <h1 className="font-geometric text-2xl font-bold text-foreground tracking-wide">
         Chris Thomas
       </h1>
-      <div className="space-y-3">
+      <div className="space-y-1.5">
         <p className="font-geometric text-lg font-normal text-foreground tracking-wide leading-relaxed">
           Product Design Engineer building humanoid robots
         </p>
