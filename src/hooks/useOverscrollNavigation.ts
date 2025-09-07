@@ -57,20 +57,38 @@ export const useOverscrollNavigation = ({
     const currentScroll = window.scrollY;
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     
-    // Only detect boundaries when we have corresponding navigation pages AND we're actually AT the boundary
-    const nearBoundaryThreshold = 5;
-    const atBottom = nextPage && currentScroll >= maxScroll - nearBoundaryThreshold;
-    const atTop = prevPage && currentScroll <= nearBoundaryThreshold;
-
-    // More restrictive boundary detection - only trigger when ACTUALLY at boundary AND trying to go beyond
-    const wouldExceedBottom = currentScroll >= maxScroll && e.deltaY > 0;
-    const wouldExceedTop = currentScroll <= 0 && e.deltaY < 0;
-
-    // Only trigger overscroll when we're actually AT the boundary trying to go beyond it
-    const tryingToScrollDown = nextPage && wouldExceedBottom;
-    const tryingToScrollUp = prevPage && wouldExceedTop;
+    console.log('ZBot wheel:', { 
+      deltaY: e.deltaY, 
+      currentScroll, 
+      maxScroll,
+      hasNext: !!nextPage,
+      hasPrev: !!prevPage
+    });
+    
+    // ONLY handle overscroll when actually trying to go beyond boundaries
+    // Don't interfere with normal scrolling at all
+    if (!nextPage && !prevPage) {
+      console.log('No navigation pages, allowing normal scroll');
+      return; // No navigation configured, allow normal scrolling
+    }
+    
+    // Very strict boundary detection - only at exact boundaries
+    const atExactTop = currentScroll === 0;
+    const atExactBottom = currentScroll === maxScroll;
+    
+    const tryingToScrollUp = prevPage && atExactTop && e.deltaY < 0;
+    const tryingToScrollDown = nextPage && atExactBottom && e.deltaY > 0;
+    
+    console.log('Boundary check:', { 
+      atExactTop, 
+      atExactBottom, 
+      tryingToScrollUp, 
+      tryingToScrollDown,
+      willPrevent: tryingToScrollUp || tryingToScrollDown
+    });
 
     if (tryingToScrollDown || tryingToScrollUp) {
+      console.log('PREVENTING scroll event');
       e.preventDefault();
       
       setIsOverscrolling(true);
@@ -99,6 +117,8 @@ export const useOverscrollNavigation = ({
           accumulatedOverscrollRef.current = 0;
         }, 200);
       }
+    } else {
+      console.log('Allowing normal scroll');
     }
   }, [navigate, nextPage, prevPage, thresholdPx, isTransitioning]);
 
