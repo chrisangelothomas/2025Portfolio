@@ -1,17 +1,10 @@
 import ZBotShowcase from '../components/ZBotShowcase';
 import Navigation from '../components/Navigation';
 import ProfileSection from '../components/ProfileSection';
-import OverscrollIndicator from '../components/OverscrollIndicator';
-import { useOverscrollNavigation } from '../hooks/useOverscrollNavigation';
 
 const ZBot = () => {
   // Create enough scroll height to see the full robot
   const scrollHeight = `200vh`;
-
-  const { overscrollAmount, isOverscrolling, thresholdProgress } = useOverscrollNavigation({
-    prevPage: '/',
-    threshold: 30
-  });
 
   return (
     <div className="bg-background min-h-screen font-geometric">
@@ -41,13 +34,6 @@ const ZBot = () => {
 
         {/* Scroll Spacer */}
         <div style={{ height: scrollHeight }} className="relative"></div>
-
-        {/* Overscroll Indicator */}
-        <OverscrollIndicator 
-          progress={thresholdProgress}
-          direction="up"
-          isActive={isOverscrolling && thresholdProgress > 0}
-        />
       </div>
     </div>
   );
