@@ -32,9 +32,10 @@ export const useOverscrollNavigation = ({
     setScrollY(currentScroll);
     setVirtualScrollY(currentScroll); // Update virtual scroll with actual scroll
     
-    // Check if we're at boundaries
-    const atBottom = currentScroll >= maxScroll;
-    const atTop = currentScroll <= 0;
+    // More responsive boundary detection
+    const nearBoundaryThreshold = 5; // 5px buffer
+    const atBottom = currentScroll >= maxScroll - nearBoundaryThreshold;
+    const atTop = currentScroll <= nearBoundaryThreshold;
     
     isAtBoundaryRef.current = atBottom || atTop;
     
@@ -55,12 +56,19 @@ export const useOverscrollNavigation = ({
 
     const currentScroll = window.scrollY;
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    const atBottom = currentScroll >= maxScroll;
-    const atTop = currentScroll <= 0;
+    
+    // More responsive boundary detection - anticipate reaching boundaries
+    const nearBoundaryThreshold = 5; // 5px buffer for more responsive detection
+    const atBottom = currentScroll >= maxScroll - nearBoundaryThreshold;
+    const atTop = currentScroll <= nearBoundaryThreshold;
+    
+    // Also check if we would go past boundary with this scroll
+    const wouldExceedBottom = currentScroll + e.deltaY >= maxScroll && e.deltaY > 0;
+    const wouldExceedTop = currentScroll + e.deltaY <= 0 && e.deltaY < 0;
 
-    // Check if trying to scroll beyond boundaries
-    const tryingToScrollDown = e.deltaY > 0 && atBottom && nextPage;
-    const tryingToScrollUp = e.deltaY < 0 && atTop && prevPage;
+    // Check if trying to scroll beyond boundaries (current or anticipated)
+    const tryingToScrollDown = (e.deltaY > 0 && (atBottom || wouldExceedBottom)) && nextPage;
+    const tryingToScrollUp = (e.deltaY < 0 && (atTop || wouldExceedTop)) && prevPage;
 
     if (tryingToScrollDown || tryingToScrollUp) {
       e.preventDefault();
