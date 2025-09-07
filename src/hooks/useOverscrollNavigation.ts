@@ -58,7 +58,7 @@ export const useOverscrollNavigation = ({
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     
     // Only detect boundaries when we have corresponding navigation pages
-    const nearBoundaryThreshold = 1; // Small buffer
+    const nearBoundaryThreshold = 5; // Larger buffer to prevent interference with normal scrolling
     const atBottom = nextPage && currentScroll >= maxScroll - nearBoundaryThreshold;
     const atTop = prevPage && currentScroll <= nearBoundaryThreshold;
     
@@ -82,13 +82,7 @@ export const useOverscrollNavigation = ({
       // Force immediate state update - this is key for responsive progress bar
       setOverscrollAmount(newAmount);
       
-      // Continue virtual scroll movement for smooth robot animation
-      const virtualScrollDelta = Math.abs(e.deltaY) * 0.15;
-      if (tryingToScrollDown) {
-        setVirtualScrollY(prev => prev + virtualScrollDelta);
-      } else if (tryingToScrollUp) {
-        setVirtualScrollY(prev => Math.max(0, prev - virtualScrollDelta));
-      }
+      // Don't manipulate virtual scroll during overscroll - causes conflicts with normal scrolling
       
       // Check if exceeded threshold for navigation
       if (newAmount > thresholdPx && !isTransitioning) {

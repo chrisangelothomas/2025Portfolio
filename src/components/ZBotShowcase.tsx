@@ -17,7 +17,7 @@ export default function ZBotShowcase() {
       <div 
         className="flex flex-col items-center"
         style={{
-          transform: `translateY(${50 - scrollY * 0.1}vh)`,
+          transform: `translateY(${-scrollY * 0.1}vh)`,
         }}
       >
         <img
