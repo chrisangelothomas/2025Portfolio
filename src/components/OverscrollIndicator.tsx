@@ -24,9 +24,12 @@ export default function OverscrollIndicator({
         <div className={`w-0.5 h-12 bg-border/30 rounded-full overflow-hidden ${
           direction === 'up' ? 'rotate-180' : ''
         }`}>
-          <div 
-            className="w-full bg-primary rounded-full transition-all duration-100 ease-out"
-            style={{ height: `${clampedProgress * 100}%` }}
+        <div 
+            className="w-full bg-primary rounded-full"
+            style={{ 
+              height: `${clampedProgress * 100}%`,
+              transition: 'none' // Remove ALL transitions for immediate updates
+            }}
           />
         </div>
         

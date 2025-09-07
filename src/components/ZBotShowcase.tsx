@@ -8,8 +8,7 @@ export default function ZBotShowcase() {
 
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
-      <div
-        className="flex flex-col items-center"
+      <div className="flex flex-col items-center"
         style={{
           transform: `translateY(${50 - virtualScrollY * 0.1}vh)`,
         }}

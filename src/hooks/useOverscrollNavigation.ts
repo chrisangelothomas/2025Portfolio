@@ -75,11 +75,11 @@ export const useOverscrollNavigation = ({
       
       setIsOverscrolling(true);
       
-      // Immediately update overscroll amount for responsive feedback
+      // Immediately accumulate and update overscroll for real-time feedback
       accumulatedOverscrollRef.current += Math.abs(e.deltaY) * 0.3;
       const newAmount = accumulatedOverscrollRef.current;
       
-      // Update progress bar immediately
+      // Force immediate state update - this is key for responsive progress bar
       setOverscrollAmount(newAmount);
       
       // Continue virtual scroll movement for smooth robot animation
@@ -96,6 +96,7 @@ export const useOverscrollNavigation = ({
         const targetPage = tryingToScrollDown ? nextPage : prevPage;
         
         setTimeout(() => {
+          console.log('Navigating to:', targetPage, 'Current scroll before nav:', window.scrollY);
           navigate(targetPage!);
           
           // Reset states immediately for smoother transition
@@ -104,54 +105,48 @@ export const useOverscrollNavigation = ({
           setIsOverscrolling(false);
           accumulatedOverscrollRef.current = 0;
           
-          // Always start at top of next page
+          // Always start at top of next page - force immediate positioning
           setTimeout(() => {
+            console.log('Setting scroll to top, current scroll:', window.scrollY);
             window.scrollTo(0, 0);
-          }, 50);
+            console.log('After setting scroll to top:', window.scrollY);
+          }, 10); // Immediate positioning
         }, 200);
       }
     }
   }, [navigate, nextPage, prevPage, thresholdPx, isTransitioning]);
 
-  // Bouncy spring back animation
+  // Simple spring back - only when user stops scrolling
   useEffect(() => {
     if (isOverscrolling && overscrollAmount > 0 && !isTransitioning) {
-      const springBack = () => {
-        setOverscrollAmount(prev => {
-          // Bouncy spring physics
-          const progress = prev / thresholdPx;
-          const springForce = 0.88 + (Math.sin(progress * Math.PI * 4) * 0.02); // Add bounce
-          const newAmount = prev * springForce;
-          accumulatedOverscrollRef.current = newAmount;
-          
-          // Bounce virtual scroll back too
-          setVirtualScrollY(current => {
-            const currentScroll = window.scrollY;
-            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-            const atBottom = currentScroll >= maxScroll;
-            const atTop = currentScroll <= 0;
+      // Only spring back after a delay to avoid interfering with active scrolling
+      const timer = setTimeout(() => {
+        const springBack = () => {
+          setOverscrollAmount(prev => {
+            const newAmount = prev * 0.85; // Simple decay
+            accumulatedOverscrollRef.current = newAmount;
             
-            if (atBottom || atTop) {
-              return currentScroll + (current - currentScroll) * springForce;
+            if (newAmount < 2) {
+              setIsOverscrolling(false);
+              accumulatedOverscrollRef.current = 0;
+              setVirtualScrollY(window.scrollY);
+              return 0;
             }
-            return current;
+            return newAmount;
           });
-          
-          if (newAmount < 2) {
-            setIsOverscrolling(false);
-            accumulatedOverscrollRef.current = 0;
-            // Snap virtual scroll back to actual scroll
-            setVirtualScrollY(window.scrollY);
-            return 0;
-          }
-          return newAmount;
-        });
-      };
+        };
+        
+        const springTimer = setInterval(springBack, 16);
+        
+        // Clean up after spring back completes
+        setTimeout(() => {
+          clearInterval(springTimer);
+        }, 500);
+      }, 100); // Delay to let active scrolling finish
       
-      const timer = setTimeout(springBack, 16); // 60fps for smoother bounce
       return () => clearTimeout(timer);
     }
-  }, [isOverscrolling, overscrollAmount, isTransitioning, thresholdPx]);
+  }, [isOverscrolling, overscrollAmount, isTransitioning]);
 
   useEffect(() => {
     window.addEventListener('scroll', handleScroll, { passive: true });
