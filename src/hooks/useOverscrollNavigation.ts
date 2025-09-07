@@ -129,11 +129,15 @@ export const useOverscrollNavigation = ({
             if (newAmount < 2) {
               setIsOverscrolling(false);
               accumulatedOverscrollRef.current = 0;
-              setVirtualScrollY(window.scrollY);
+              // Smoothly animate virtualScrollY back to current scroll position
+              setVirtualScrollY(prev => prev * 0.9 + window.scrollY * 0.1);
               return 0;
             }
             return newAmount;
           });
+          
+          // Smoothly animate virtualScrollY back towards current scroll position
+          setVirtualScrollY(prev => prev * 0.9 + window.scrollY * 0.1);
         };
         
         const springTimer = setInterval(springBack, 16);
