@@ -75,9 +75,12 @@ export const useOverscrollNavigation = ({
       
       setIsOverscrolling(true);
       
-      // Progressive resistance with viscous feel
-      const currentProgress = accumulatedOverscrollRef.current / thresholdPx;
-      const baseResistance = Math.max(0.1, 1 - (currentProgress * 0.8));
+      // Immediately update overscroll amount for responsive feedback
+      accumulatedOverscrollRef.current += Math.abs(e.deltaY) * 0.3;
+      const newAmount = accumulatedOverscrollRef.current;
+      
+      // Update progress bar immediately
+      setOverscrollAmount(newAmount);
       
       // Continue virtual scroll movement for smooth robot animation
       const virtualScrollDelta = Math.abs(e.deltaY) * 0.15;
@@ -86,12 +89,6 @@ export const useOverscrollNavigation = ({
       } else if (tryingToScrollUp) {
         setVirtualScrollY(prev => Math.max(0, prev - virtualScrollDelta));
       }
-      
-      // Accumulate overscroll with viscous resistance
-      accumulatedOverscrollRef.current += Math.abs(e.deltaY) * 0.2 * baseResistance;
-      const newAmount = accumulatedOverscrollRef.current;
-      
-      setOverscrollAmount(newAmount);
       
       // Check if exceeded threshold for navigation
       if (newAmount > thresholdPx && !isTransitioning) {
