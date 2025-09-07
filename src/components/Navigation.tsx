@@ -15,7 +15,7 @@ export default function Navigation({ currentRobot, onRobotSelect }: NavigationPr
 
   return (
     <nav className="space-y-8">
-      <h2 className="font-geometric text-lg font-medium text-foreground tracking-wider uppercase">
+      <h2 className="font-geometric text-lg font-medium text-foreground tracking-wide">
         Projects
       </h2>
       <ul className="space-y-4">
