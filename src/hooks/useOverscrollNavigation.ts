@@ -32,14 +32,14 @@ export const useOverscrollNavigation = ({
     setScrollY(currentScroll);
     setVirtualScrollY(currentScroll); // Update virtual scroll with actual scroll
     
-    // More responsive boundary detection
-    const nearBoundaryThreshold = 5; // 5px buffer
-    const atBottom = currentScroll >= maxScroll - nearBoundaryThreshold;
-    const atTop = currentScroll <= nearBoundaryThreshold;
+    // Only detect boundaries when we actually have navigation pages
+    const nearBoundaryThreshold = 1; // Smaller buffer to avoid interference
+    const atBottom = nextPage && currentScroll >= maxScroll - nearBoundaryThreshold;
+    const atTop = prevPage && currentScroll <= nearBoundaryThreshold;
     
     isAtBoundaryRef.current = atBottom || atTop;
     
-    // Only handle overscroll if we're at a boundary
+    // Only handle overscroll if we're at a boundary AND have a corresponding page
     if (!isAtBoundaryRef.current) {
       // Reset overscroll when scrolling normally
       if (isOverscrolling) {
@@ -57,10 +57,10 @@ export const useOverscrollNavigation = ({
     const currentScroll = window.scrollY;
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     
-    // More responsive boundary detection - anticipate reaching boundaries
-    const nearBoundaryThreshold = 5; // 5px buffer for more responsive detection
-    const atBottom = currentScroll >= maxScroll - nearBoundaryThreshold;
-    const atTop = currentScroll <= nearBoundaryThreshold;
+    // Only detect boundaries when we have corresponding navigation pages
+    const nearBoundaryThreshold = 1; // Small buffer
+    const atBottom = nextPage && currentScroll >= maxScroll - nearBoundaryThreshold;
+    const atTop = prevPage && currentScroll <= nearBoundaryThreshold;
     
     // Also check if we would go past boundary with this scroll
     const wouldExceedBottom = currentScroll + e.deltaY >= maxScroll && e.deltaY > 0;
