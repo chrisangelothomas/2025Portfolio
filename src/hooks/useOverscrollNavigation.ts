@@ -57,18 +57,34 @@ export const useOverscrollNavigation = ({
     const currentScroll = window.scrollY;
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     
-    // Only detect boundaries when we have corresponding navigation pages
-    const nearBoundaryThreshold = 5; // Larger buffer to prevent interference with normal scrolling
+    console.log('Wheel event:', { 
+      deltaY: e.deltaY, 
+      currentScroll, 
+      maxScroll, 
+      hasNextPage: !!nextPage, 
+      hasPrevPage: !!prevPage 
+    });
+    
+    // Only detect boundaries when we have corresponding navigation pages AND we're actually AT the boundary
+    const nearBoundaryThreshold = 5;
     const atBottom = nextPage && currentScroll >= maxScroll - nearBoundaryThreshold;
     const atTop = prevPage && currentScroll <= nearBoundaryThreshold;
     
-    // Also check if we would go past boundary with this scroll
-    const wouldExceedBottom = currentScroll + e.deltaY >= maxScroll && e.deltaY > 0;
-    const wouldExceedTop = currentScroll + e.deltaY <= 0 && e.deltaY < 0;
+    // More restrictive boundary detection - only trigger when ACTUALLY at boundary AND trying to go beyond
+    const wouldExceedBottom = currentScroll >= maxScroll && e.deltaY > 0;
+    const wouldExceedTop = currentScroll <= 0 && e.deltaY < 0;
 
-    // Check if trying to scroll beyond boundaries (current or anticipated)
-    const tryingToScrollDown = (e.deltaY > 0 && (atBottom || wouldExceedBottom)) && nextPage;
-    const tryingToScrollUp = (e.deltaY < 0 && (atTop || wouldExceedTop)) && prevPage;
+    console.log('Boundary check:', { 
+      atTop, 
+      atBottom, 
+      wouldExceedTop, 
+      wouldExceedBottom, 
+      deltaY: e.deltaY 
+    });
+
+    // Only trigger overscroll when we're actually AT the boundary trying to go beyond it
+    const tryingToScrollDown = nextPage && wouldExceedBottom;
+    const tryingToScrollUp = prevPage && wouldExceedTop;
 
     if (tryingToScrollDown || tryingToScrollUp) {
       e.preventDefault();
