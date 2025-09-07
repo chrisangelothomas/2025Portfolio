@@ -96,7 +96,6 @@ export const useOverscrollNavigation = ({
         const targetPage = tryingToScrollDown ? nextPage : prevPage;
         
         setTimeout(() => {
-          console.log('Navigating to:', targetPage, 'Current scroll before nav:', window.scrollY);
           navigate(targetPage!);
           
           // Reset states immediately for smoother transition
@@ -104,13 +103,6 @@ export const useOverscrollNavigation = ({
           setOverscrollAmount(0);
           setIsOverscrolling(false);
           accumulatedOverscrollRef.current = 0;
-          
-          // Always start at top of next page - force immediate positioning
-          setTimeout(() => {
-            console.log('Setting scroll to top, current scroll:', window.scrollY);
-            window.scrollTo(0, 0);
-            console.log('After setting scroll to top:', window.scrollY);
-          }, 10); // Immediate positioning
         }, 200);
       }
     }
