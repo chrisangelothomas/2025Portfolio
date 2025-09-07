@@ -3,30 +3,28 @@ import { useOverscrollNavigation } from '../hooks/useOverscrollNavigation';
 import { useLocation } from 'react-router-dom';
 
 export default function RobotShowcase() {
-  const { virtualScrollY, springTransform, isTransitioning, isOverscrolling, isScrollingDown } = useOverscrollNavigation({
+  const { virtualScrollY } = useOverscrollNavigation({
     nextPage: '/zbot',
-    threshold: 40
+    threshold: 30
   });
   
   const location = useLocation();
   const [isPageTransitioning, setIsPageTransitioning] = useState(true);
 
-  // Smooth page transition - K-Bot slides down from above
+  // Simple slide up + fade in animation
   useEffect(() => {
-    const timer = setTimeout(() => setIsPageTransitioning(false), 50);
+    const timer = setTimeout(() => setIsPageTransitioning(false), 100);
     return () => clearTimeout(timer);
   }, [location.pathname]);
 
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
       <div
-        className={`flex flex-col items-center ${
-          isPageTransitioning ? 'transition-transform duration-800 ease-out' : (isTransitioning ? 'transition-transform duration-500 ease-out' : '')
+        className={`flex flex-col items-center transition-all duration-500 ease-out ${
+          isPageTransitioning ? 'translate-y-8 opacity-0' : 'translate-y-0 opacity-100'
         }`}
         style={{
-          transform: isPageTransitioning 
-            ? 'translateY(-100vh)' 
-            : `translateY(${(50 - virtualScrollY * 0.1) + (isOverscrolling ? (isScrollingDown ? springTransform * 0.01 : -springTransform * 0.01) : 0)}vh)`,
+          transform: `translateY(${50 - virtualScrollY * 0.1}vh)`,
         }}
       >
         <img

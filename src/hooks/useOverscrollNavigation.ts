@@ -107,18 +107,9 @@ export const useOverscrollNavigation = ({
           setIsOverscrolling(false);
           accumulatedOverscrollRef.current = 0;
           
-          // Position scroll for optimal user experience with delay for page load
+          // Always start at top of next page
           setTimeout(() => {
-            if (tryingToScrollUp) {
-              // Start at bottom for visual continuity, then scroll to top
-              window.scrollTo(0, document.documentElement.scrollHeight);
-              setTimeout(() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }, 100);
-            } else {
-              // For downward scroll, start at top
-              window.scrollTo(0, 0);
-            }
+            window.scrollTo(0, 0);
           }, 50);
         }, 200);
       }
