@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 export default function ZBotShowcase() {
   const { virtualScrollY, springTransform, isTransitioning, isOverscrolling, isScrollingUp } = useOverscrollNavigation({
     prevPage: '/',
-    threshold: 15
+    threshold: 8
   });
   
   const location = useLocation();

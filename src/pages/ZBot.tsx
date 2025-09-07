@@ -10,7 +10,7 @@ const ZBot = () => {
 
   const { overscrollAmount, isOverscrolling, thresholdProgress } = useOverscrollNavigation({
     prevPage: '/',
-    threshold: 30
+    threshold: 15
   });
 
   return (

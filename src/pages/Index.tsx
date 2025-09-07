@@ -11,7 +11,7 @@ const Index = () => {
 
   const { overscrollAmount, isOverscrolling, thresholdProgress } = useOverscrollNavigation({
     nextPage: '/zbot',
-    threshold: 30
+    threshold: 15
   });
 
   return (

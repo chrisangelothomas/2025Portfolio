@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 export default function RobotShowcase() {
   const { virtualScrollY, springTransform, isTransitioning, isOverscrolling, isScrollingDown } = useOverscrollNavigation({
     nextPage: '/zbot',
-    threshold: 15
+    threshold: 8
   });
   
   const location = useLocation();
