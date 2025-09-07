@@ -57,30 +57,14 @@ export const useOverscrollNavigation = ({
     const currentScroll = window.scrollY;
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     
-    console.log('Wheel event:', { 
-      deltaY: e.deltaY, 
-      currentScroll, 
-      maxScroll, 
-      hasNextPage: !!nextPage, 
-      hasPrevPage: !!prevPage 
-    });
-    
     // Only detect boundaries when we have corresponding navigation pages AND we're actually AT the boundary
     const nearBoundaryThreshold = 5;
     const atBottom = nextPage && currentScroll >= maxScroll - nearBoundaryThreshold;
     const atTop = prevPage && currentScroll <= nearBoundaryThreshold;
-    
+
     // More restrictive boundary detection - only trigger when ACTUALLY at boundary AND trying to go beyond
     const wouldExceedBottom = currentScroll >= maxScroll && e.deltaY > 0;
     const wouldExceedTop = currentScroll <= 0 && e.deltaY < 0;
-
-    console.log('Boundary check:', { 
-      atTop, 
-      atBottom, 
-      wouldExceedTop, 
-      wouldExceedBottom, 
-      deltaY: e.deltaY 
-    });
 
     // Only trigger overscroll when we're actually AT the boundary trying to go beyond it
     const tryingToScrollDown = nextPage && wouldExceedBottom;

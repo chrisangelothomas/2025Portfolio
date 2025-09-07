@@ -2,7 +2,6 @@ import { useOverscrollNavigation } from '../hooks/useOverscrollNavigation';
 
 export default function RobotShowcase() {
   const { virtualScrollY } = useOverscrollNavigation({
-    nextPage: '/zbot',
     threshold: 30
   });
 
