@@ -1,15 +1,15 @@
-import RobotShowcase from '../components/RobotShowcase';
+import ZBotShowcase from '../components/ZBotShowcase';
 import Navigation from '../components/Navigation';
 import ProfileSection from '../components/ProfileSection';
 import OverscrollIndicator from '../components/OverscrollIndicator';
 import { useOverscrollNavigation } from '../hooks/useOverscrollNavigation';
 
-const Index = () => {
+const ZBot = () => {
   // Create enough scroll height to see the full robot
   const scrollHeight = `200vh`;
 
   const { overscrollAmount, isOverscrolling, thresholdProgress } = useOverscrollNavigation({
-    nextPage: '/zbot',
+    prevPage: '/',
     threshold: 30
   });
 
@@ -24,20 +24,20 @@ const Index = () => {
             <ProfileSection />
           </div>
 
-          {/* Center Robot Display - Handled by RobotShowcase */}
+          {/* Center Robot Display - Handled by ZBotShowcase */}
           <div className="col-span-4"></div>
 
           {/* Right Navigation - Centered */}
           <div className="col-span-4 flex justify-end items-center">
             <Navigation 
-              currentRobot={0} 
+              currentRobot={1} 
               onRobotSelect={() => {}}
             />
           </div>
         </div>
 
         {/* Robot Showcase */}
-        <RobotShowcase />
+        <ZBotShowcase />
 
         {/* Scroll Spacer */}
         <div style={{ height: scrollHeight }} className="relative"></div>
@@ -45,7 +45,7 @@ const Index = () => {
         {/* Overscroll Indicator */}
         <OverscrollIndicator 
           progress={thresholdProgress}
-          direction="down"
+          direction="up"
           isActive={isOverscrolling && thresholdProgress > 0}
         />
       </div>
@@ -53,4 +53,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default ZBot;

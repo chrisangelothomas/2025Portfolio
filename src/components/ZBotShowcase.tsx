@@ -1,8 +1,8 @@
 import { useOverscrollNavigation } from '../hooks/useOverscrollNavigation';
 
-export default function RobotShowcase() {
+export default function ZBotShowcase() {
   const { virtualScrollY } = useOverscrollNavigation({
-    nextPage: '/zbot',
+    prevPage: '/',
     threshold: 30
   });
 
@@ -15,8 +15,8 @@ export default function RobotShowcase() {
         }}
       >
         <img
-          src="/lovable-uploads/b1ef3f37-b46d-4a5b-8911-cfcbece79ac4.png"
-          alt="K-Bot"
+          src="/lovable-uploads/0b3292b6-1b3b-488a-8c3b-22fc5249055b.png"
+          alt="Z-Bot"
           className="w-[200vw] h-[200vh] object-contain"
         />
       </div>
