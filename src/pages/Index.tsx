@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import RobotShowcase from '../components/RobotShowcase';
 import Navigation from '../components/Navigation';
 import ProfileSection from '../components/ProfileSection';

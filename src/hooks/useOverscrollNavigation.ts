@@ -32,14 +32,14 @@ export const useOverscrollNavigation = ({
     setScrollY(currentScroll);
     setVirtualScrollY(currentScroll); // Update virtual scroll with actual scroll
     
-    // Only detect boundaries when we actually have navigation pages
-    const nearBoundaryThreshold = 1; // Smaller buffer to avoid interference
-    const atBottom = nextPage && currentScroll >= maxScroll - nearBoundaryThreshold;
-    const atTop = prevPage && currentScroll <= nearBoundaryThreshold;
+    // More responsive boundary detection
+    const nearBoundaryThreshold = 5; // 5px buffer
+    const atBottom = currentScroll >= maxScroll - nearBoundaryThreshold;
+    const atTop = currentScroll <= nearBoundaryThreshold;
     
     isAtBoundaryRef.current = atBottom || atTop;
     
-    // Only handle overscroll if we're at a boundary AND have a corresponding page
+    // Only handle overscroll if we're at a boundary
     if (!isAtBoundaryRef.current) {
       // Reset overscroll when scrolling normally
       if (isOverscrolling) {
@@ -57,38 +57,20 @@ export const useOverscrollNavigation = ({
     const currentScroll = window.scrollY;
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     
-    console.log('ZBot wheel:', { 
-      deltaY: e.deltaY, 
-      currentScroll, 
-      maxScroll,
-      hasNext: !!nextPage,
-      hasPrev: !!prevPage
-    });
+    // More responsive boundary detection - anticipate reaching boundaries
+    const nearBoundaryThreshold = 5; // 5px buffer for more responsive detection
+    const atBottom = currentScroll >= maxScroll - nearBoundaryThreshold;
+    const atTop = currentScroll <= nearBoundaryThreshold;
     
-    // ONLY handle overscroll when actually trying to go beyond boundaries
-    // Don't interfere with normal scrolling at all
-    if (!nextPage && !prevPage) {
-      console.log('No navigation pages, allowing normal scroll');
-      return; // No navigation configured, allow normal scrolling
-    }
-    
-    // Very strict boundary detection - only at exact boundaries
-    const atExactTop = currentScroll === 0;
-    const atExactBottom = currentScroll === maxScroll;
-    
-    const tryingToScrollUp = prevPage && atExactTop && e.deltaY < 0;
-    const tryingToScrollDown = nextPage && atExactBottom && e.deltaY > 0;
-    
-    console.log('Boundary check:', { 
-      atExactTop, 
-      atExactBottom, 
-      tryingToScrollUp, 
-      tryingToScrollDown,
-      willPrevent: tryingToScrollUp || tryingToScrollDown
-    });
+    // Also check if we would go past boundary with this scroll
+    const wouldExceedBottom = currentScroll + e.deltaY >= maxScroll && e.deltaY > 0;
+    const wouldExceedTop = currentScroll + e.deltaY <= 0 && e.deltaY < 0;
+
+    // Check if trying to scroll beyond boundaries (current or anticipated)
+    const tryingToScrollDown = (e.deltaY > 0 && (atBottom || wouldExceedBottom)) && nextPage;
+    const tryingToScrollUp = (e.deltaY < 0 && (atTop || wouldExceedTop)) && prevPage;
 
     if (tryingToScrollDown || tryingToScrollUp) {
-      console.log('PREVENTING scroll event');
       e.preventDefault();
       
       setIsOverscrolling(true);
@@ -100,7 +82,13 @@ export const useOverscrollNavigation = ({
       // Force immediate state update - this is key for responsive progress bar
       setOverscrollAmount(newAmount);
       
-      // Don't manipulate virtual scroll during overscroll - causes conflicts with normal scrolling
+      // Continue virtual scroll movement for smooth robot animation
+      const virtualScrollDelta = Math.abs(e.deltaY) * 0.15;
+      if (tryingToScrollDown) {
+        setVirtualScrollY(prev => prev + virtualScrollDelta);
+      } else if (tryingToScrollUp) {
+        setVirtualScrollY(prev => Math.max(0, prev - virtualScrollDelta));
+      }
       
       // Check if exceeded threshold for navigation
       if (newAmount > thresholdPx && !isTransitioning) {
@@ -108,6 +96,7 @@ export const useOverscrollNavigation = ({
         const targetPage = tryingToScrollDown ? nextPage : prevPage;
         
         setTimeout(() => {
+          console.log('Navigating to:', targetPage, 'Current scroll before nav:', window.scrollY);
           navigate(targetPage!);
           
           // Reset states immediately for smoother transition
@@ -115,10 +104,15 @@ export const useOverscrollNavigation = ({
           setOverscrollAmount(0);
           setIsOverscrolling(false);
           accumulatedOverscrollRef.current = 0;
+          
+          // Always start at top of next page - force immediate positioning
+          setTimeout(() => {
+            console.log('Setting scroll to top, current scroll:', window.scrollY);
+            window.scrollTo(0, 0);
+            console.log('After setting scroll to top:', window.scrollY);
+          }, 10); // Immediate positioning
         }, 200);
       }
-    } else {
-      console.log('Allowing normal scroll');
     }
   }, [navigate, nextPage, prevPage, thresholdPx, isTransitioning]);
 
@@ -135,13 +129,15 @@ export const useOverscrollNavigation = ({
             if (newAmount < 2) {
               setIsOverscrolling(false);
               accumulatedOverscrollRef.current = 0;
-              // Don't manipulate virtualScrollY - let it stay in sync with actual scroll
+              // Smoothly animate virtualScrollY back to current scroll position
+              setVirtualScrollY(prev => prev * 0.9 + window.scrollY * 0.1);
               return 0;
             }
             return newAmount;
           });
           
-          // Don't manipulate virtualScrollY during spring back - causes scroll conflicts
+          // Smoothly animate virtualScrollY back towards current scroll position
+          setVirtualScrollY(prev => prev * 0.9 + window.scrollY * 0.1);
         };
         
         const springTimer = setInterval(springBack, 16);
