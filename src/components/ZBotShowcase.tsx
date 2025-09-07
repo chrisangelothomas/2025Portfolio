@@ -1,11 +1,4 @@
-import { useOverscrollNavigation } from '../hooks/useOverscrollNavigation';
-
-export default function ZBotShowcase() {
-  const { virtualScrollY } = useOverscrollNavigation({
-    prevPage: '/',
-    threshold: 30
-  });
-
+export default function ZBotShowcase({ virtualScrollY }: { virtualScrollY: number }) {
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
       <div

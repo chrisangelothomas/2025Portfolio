@@ -8,7 +8,7 @@ const ZBot = () => {
   // Create enough scroll height to see the full robot
   const scrollHeight = `200vh`;
 
-  const { overscrollAmount, isOverscrolling, thresholdProgress } = useOverscrollNavigation({
+  const { overscrollAmount, isOverscrolling, thresholdProgress, virtualScrollY } = useOverscrollNavigation({
     prevPage: '/',
     threshold: 30
   });
@@ -37,7 +37,7 @@ const ZBot = () => {
         </div>
 
         {/* Robot Showcase */}
-        <ZBotShowcase />
+        <ZBotShowcase virtualScrollY={virtualScrollY} />
 
         {/* Scroll Spacer */}
         <div style={{ height: scrollHeight }} className="relative"></div>
