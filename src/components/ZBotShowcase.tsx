@@ -1,4 +1,4 @@
-import ZBotImg from '../assets/Z-Bot.png';
+import ZBotImg from '../assets/z-bot.png';
 
 export default function ZBotShowcase() {
   return (

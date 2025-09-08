@@ -1,4 +1,4 @@
-import ZBotShowcase from '@/components/ZBotShowcase';
+import ZBotShowcase from '../components/ZBotShowcase';
 import Navigation from '../components/Navigation';
 import ProfileSection from '../components/ProfileSection';
 import { useCallback, useEffect, useRef, useState } from 'react';
