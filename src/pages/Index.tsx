@@ -52,7 +52,7 @@ const Index = () => {
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     console.log(latest);
-    setActive(latest > 40);
+    setActive(latest < 60);
     scrollRef.current = latest;
   });
 
@@ -118,17 +118,25 @@ const Index = () => {
         <div className="grid grid-cols-12 gap-6 h-full">
           {/* Left column - Profile (columns 1-4) */}
           <div className="col-span-4 flex items-center pointer-events-auto">
-            <main className="flex flex-col gap-[32px] row-start-2" style={{
-                  alignItems: active? "center" : "start",
+            <main className="flex h-full flex-col gap-[32px] row-start-2" style={{
+                  justifyContent: active? "center" : "start",
                 }}>
               <motion.div
                 layout="position"
                 key="test"
-
-                transition={{}}
+                transition={{ 
+                  duration: 0.5, 
+                  ease: [0.25, 0.1, 0.25, 1] // Custom cubic-bezier for smoother easing
+                }}
                 className="text-2xl"
               >
-                <ProfileSection />
+                <ProfileSection 
+                  isCollapsed={!active} 
+                  onExpand={() => {
+                    setActive(true);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }} 
+                />
               </motion.div>
             </main>
           </div>
