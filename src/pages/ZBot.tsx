@@ -2,6 +2,7 @@ import ZBotShowcase from '@/components/ZBotShowcase';
 import Navigation from '../components/Navigation';
 import ProfileSection from '../components/ProfileSection';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const ZBot = () => {
   // Minimal overscroll-up interaction to transition back to K-Bot
@@ -116,40 +117,47 @@ const ZBot = () => {
       </div>
 
       {/* Grid overlay - toggled with Shift+G */}
-      {showGrid && (
-        <div className="fixed inset-0 z-30 pointer-events-none" style={{ padding: '40px' }}>
-          <div className="grid grid-cols-12 gap-6 h-full">
-            {Array.from({ length: 12 }, (_, i) => (
-              <div 
-                key={i} 
-                className="bg-red-500" 
-                style={{ opacity: 0.1 }}
-              />
-            ))}
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {showGrid && (
+          <motion.div 
+            className="fixed inset-0 z-30 pointer-events-none" 
+            style={{ padding: '40px' }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="grid grid-cols-12 gap-6 h-full">
+              {Array.from({ length: 12 }, (_, i) => (
+                <motion.div 
+                  key={i} 
+                  className="bg-red-500" 
+                  style={{ opacity: 0.1 }}
+                  initial={{ scaleY: 0 }}
+                  animate={{ scaleY: 1 }}
+                  transition={{ duration: 0.3, delay: i * 0.02 }}
+                />
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Moving Content (images only) */}
-      <div className="relative z-10"
-        style={{
-          transform: `translateY(${entering ? 24 : 0}px)`,
-          opacity: entering ? 0 : 1,
-          transition: 'transform 300ms ease, opacity 300ms ease',
-          willChange: 'transform, opacity',
-        }}
+      <motion.div 
+        className="relative z-10"
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
       >
-        <div
-          style={{
-            transform: `translateY(${overscrollPx}px)`,
-            transition: isAnimating ? 'transform 250ms ease-out' : 'transform 0ms',
-            willChange: 'transform',
-          }}
+        <motion.div
+          animate={{ y: overscrollPx }}
+          transition={isAnimating ? { duration: 0.25, ease: "easeOut" } : { duration: 0 }}
         >
           <ZBotShowcase />
           <div className="h-[30vh]"></div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };

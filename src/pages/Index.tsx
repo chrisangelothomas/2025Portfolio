@@ -2,6 +2,7 @@ import KBotShowcase from '../components/KBotShowcase';
 import Navigation from '../components/Navigation';
 import ProfileSection from '../components/ProfileSection';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence, useMotionValueEvent, useScroll } from 'framer-motion';
 
 const Index = () => {
   // Minimal overscroll-down interaction to transition to Z-Bot
@@ -43,6 +44,17 @@ const Index = () => {
       }
     }
   }, [isAnimating, resistance, thresholdPx]);
+
+  const [active, setActive] = useState(false);
+  const { scrollY } = useScroll();
+
+  const scrollRef = useRef(0);
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    console.log(latest);
+    setActive(latest > 40);
+    scrollRef.current = latest;
+  });
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => onWheel(e);
@@ -106,7 +118,19 @@ const Index = () => {
         <div className="grid grid-cols-12 gap-6 h-full">
           {/* Left column - Profile (columns 1-4) */}
           <div className="col-span-4 flex items-center pointer-events-auto">
-            <ProfileSection />
+            <main className="flex flex-col gap-[32px] row-start-2" style={{
+                  alignItems: active? "center" : "start",
+                }}>
+              <motion.div
+                layout="position"
+                key="test"
+
+                transition={{}}
+                className="text-2xl"
+              >
+                <ProfileSection />
+              </motion.div>
+            </main>
           </div>
           
           {/* Center column - Empty (columns 5-8) */}
@@ -120,40 +144,47 @@ const Index = () => {
       </div>
 
       {/* Grid overlay - toggled with Shift+G */}
-      {showGrid && (
-        <div className="fixed inset-0 z-30 pointer-events-none" style={{ padding: '40px' }}>
-          <div className="grid grid-cols-12 gap-6 h-full">
-            {Array.from({ length: 12 }, (_, i) => (
-              <div 
-                key={i} 
-                className="bg-red-500" 
-                style={{ opacity: 0.1 }}
-              />
-            ))}
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {showGrid && (
+          <motion.div 
+            className="fixed inset-0 z-30 pointer-events-none" 
+            style={{ padding: '40px' }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="grid grid-cols-12 gap-6 h-full">
+              {Array.from({ length: 12 }, (_, i) => (
+                <motion.div 
+                  key={i} 
+                  className="bg-red-500" 
+                  style={{ opacity: 0.1 }}
+                  initial={{ scaleY: 0 }}
+                  animate={{ scaleY: 1 }}
+                  transition={{ duration: 0.3, delay: i * 0.02 }}
+                />
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Moving Content (images only) */}
-      <div className="relative z-10"
-        style={{
-          transform: `translateY(${entering ? 24 : 0}px)`,
-          opacity: entering ? 0 : 1,
-          transition: 'transform 300ms ease, opacity 300ms ease',
-          willChange: 'transform, opacity',
-        }}
+      <motion.div 
+        className="relative z-10"
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, ease: "easeOut" }}
       >
-        <div
-          style={{
-            transform: `translateY(${-overscrollPx}px)`,
-            transition: isAnimating ? 'transform 250ms ease-out' : 'transform 0ms',
-            willChange: 'transform',
-          }}
+        <motion.div
+          animate={{ y: -overscrollPx }}
+          transition={isAnimating ? { duration: 0.25, ease: "easeOut" } : { duration: 0 }}
         >
           <KBotShowcase />
           <div className="h-[10vh]"></div>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };
