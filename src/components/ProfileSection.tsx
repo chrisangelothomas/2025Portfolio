@@ -17,7 +17,16 @@ export default function ProfileSection({ isCollapsed = false, onExpand }: Profil
           <motion.div 
             key="expanded"
             className="space-y-1.5"
-            initial={{ opacity: 1, height: "auto" }}
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ 
+              opacity: 1, 
+              height: "auto",
+              transition: { 
+                duration: 0.4, 
+                ease: [0.25, 0.1, 0.25, 1],
+                opacity: { duration: 0.3, delay: 0.1 }
+              }
+            }}
             exit={{ 
               opacity: 0, 
               height: 0,
@@ -27,7 +36,6 @@ export default function ProfileSection({ isCollapsed = false, onExpand }: Profil
                 opacity: { duration: 0.3 }
               }
             }}
-            transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
           >
             <p className="font-geometric text-lg font-normal text-foreground tracking-wide leading-normal">
               Product Design Engineer building humanoid robots

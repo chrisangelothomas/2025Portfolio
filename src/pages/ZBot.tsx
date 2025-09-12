@@ -2,7 +2,7 @@ import ZBotShowcase from '@/components/ZBotShowcase';
 import Navigation from '../components/Navigation';
 import ProfileSection from '../components/ProfileSection';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValueEvent, useScroll } from 'framer-motion';
 
 const ZBot = () => {
   // Minimal overscroll-up interaction to transition back to K-Bot
@@ -10,15 +10,19 @@ const ZBot = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [entering, setEntering] = useState(true);
   const [showGrid, setShowGrid] = useState(false);
+  const [bioExpanded, setBioExpanded] = useState(false);
+  const [active, setActive] = useState(false);
+  const [isScrollingToTop, setIsScrollingToTop] = useState(false);
   const springRafRef = useRef<number | null>(null);
   const overscrollRef = useRef(0);
+  const { scrollY } = useScroll();
 
   const thresholdPx = Math.round(window.innerHeight * 0.21); // 30% reduction from 0.30
   const resistance = 0.2; // smaller = more resistance
   const boundaryBuffer = 4; // px buffer to consider near top
 
   const onWheel = useCallback((e: WheelEvent) => {
-    if (isAnimating) return;
+    if (isAnimating || isScrollingToTop) return;
 
     const atTop = window.scrollY <= boundaryBuffer;
 
@@ -40,7 +44,22 @@ const ZBot = () => {
         }, 250);
       }
     }
-  }, [isAnimating, resistance, thresholdPx]);
+  }, [isAnimating, resistance, thresholdPx, isScrollingToTop]);
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setActive(latest < 60);
+    
+    // If we're scrolling to top and reach the top (or very close), clear the flag
+    if (isScrollingToTop && latest < 5) {
+      setIsScrollingToTop(false);
+    }
+    
+    // If bio is expanded and user scrolls down, collapse it
+    // But don't collapse if we're currently scrolling to top
+    if (bioExpanded && latest > 60 && !isScrollingToTop) {
+      setBioExpanded(false);
+    }
+  });
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => onWheel(e);
@@ -103,7 +122,41 @@ const ZBot = () => {
         <div className="grid grid-cols-12 gap-6 h-full">
           {/* Left column - Profile (columns 1-4) */}
           <div className="col-span-4 flex items-center pointer-events-auto">
-            <ProfileSection />
+            <main className="flex h-full flex-col gap-[32px] row-start-2" style={{
+                  justifyContent: (bioExpanded && active) ? "center" : "start",
+                }}>
+              <motion.div
+                layout="position"
+                key="zbot-profile"
+                transition={{ 
+                  duration: 0.5, 
+                  ease: [0.25, 0.1, 0.25, 1] // Custom cubic-bezier for smoother easing
+                }}
+                className="text-2xl"
+              >
+                <ProfileSection 
+                  isCollapsed={!bioExpanded} 
+                  onExpand={() => {
+                    setBioExpanded(true);
+                    setIsScrollingToTop(true);
+                    
+                    // Use smooth scroll and wait for completion
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    
+                    // Wait for scroll to complete, then clear the flag
+                    const checkScrollComplete = () => {
+                      if (window.scrollY <= 5) {
+                        setIsScrollingToTop(false);
+                      } else {
+                        setTimeout(checkScrollComplete, 50);
+                      }
+                    };
+                    
+                    setTimeout(checkScrollComplete, 100);
+                  }} 
+                />
+              </motion.div>
+            </main>
           </div>
           
           {/* Center column - Empty (columns 5-8) */}
@@ -151,7 +204,7 @@ const ZBot = () => {
         transition={{ duration: 0.3, ease: "easeOut" }}
       >
         <motion.div
-          animate={{ y: overscrollPx }}
+          animate={{ y: isScrollingToTop ? 0 : overscrollPx }}
           transition={isAnimating ? { duration: 0.25, ease: "easeOut" } : { duration: 0 }}
         >
           <ZBotShowcase />

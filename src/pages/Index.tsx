@@ -45,7 +45,7 @@ const Index = () => {
     }
   }, [isAnimating, resistance, thresholdPx]);
 
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(true);
   const { scrollY } = useScroll();
 
   const scrollRef = useRef(0);
